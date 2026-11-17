@@ -1,0 +1,599 @@
+%% Template beamer nao oficial com a identidade visual da FGV.
+%% Baseado no template do IMPA de Rafael Vieira Westenberger (CC BY-SA 4.0),
+%% totalmente reescrito segundo o "Manual de Identidade Visual - Conveniadas
+%% IDE" (FGV/SCM, maio de 2009):
+%%   * Cor padrao: azul escuro, Pantone 281C, RGB 28/47/103 (pag. 11)
+%%   * Tipografia: Arial e derivados para documentos (pag. 10); aqui,
+%%     Helvetica (helvet) em pdfLaTeX; titulos em versao condensada,
+%%     como no manual (Zurich Cn BT)
+%%   * Marca FGV (simbolo V + "FGV"): vetor extraido do proprio manual,
+%%     embutido abaixo em \fgvlogo -- nao e preciso nenhum arquivo externo
+%%   * Layout inspirado no manual: faixa de titulo com filete azul,
+%%     rodape com filete duplo, capa com faixa lateral azul, caixas
+%%     lavanda com seta
+%% Compile com pdfLaTeX (ou latexmk -pdf).
+
+\documentclass[aspectratio=1610,10pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel} % Garante a hifenização correta e tradução de termos
+\usepackage{amsmath, amssymb, amsthm, mathtools} % Rigor matemático e símbolos
+\usepackage{hyperref} % Links interativos
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage{tikz}
+\usefonttheme[onlymath]{serif}
+
+% Configuração para sumário e links interativos discretos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=main,
+    urlcolor=main,
+    citecolor=main
+}
+
+% Definição de ambientes matemáticos formais em português
+\newtheorem{teorema}{Teorema}
+\newtheorem{lema}{Lema}
+\newtheorem{definicao}{Definição}
+
+%% ------------------------------------------------------------------
+%% Cores (manual FGV)
+%% ------------------------------------------------------------------
+\definecolor{main}{RGB}{28,47,103}        % azul padrao FGV (Pantone 281C)
+\definecolor{fgvcyan}{RGB}{0,173,239}     % numerais/destaques dos titulos
+\definecolor{fgvlav}{RGB}{192,194,223}    % barras lavanda dos subtitulos
+\definecolor{fgvgray}{RGB}{120,126,138}   % notas laterais / numeracao
+\definecolor{fgvink}{RGB}{35,31,32}       % texto corrente
+
+%% ------------------------------------------------------------------
+%% Marca FGV (vetor do manual, pag. 3). \fgvlogo[cor]{escala}
+%% ------------------------------------------------------------------
+\newcommand{\fgvlogo}[2][main]{%
+  \begin{pgfpicture}%
+    \pgftransformscale{#2}%
+    \pgfsetfillcolor{#1}%
+\pgfpathmoveto{\pgfpoint{20.266pt}{22.020pt}}%
+\pgfpathlineto{\pgfpoint{26.312pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{37.504pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{25.953pt}{18.344pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{0.000pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{10.996pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{22.977pt}{12.234pt}}%
+\pgfpathlineto{\pgfpoint{11.980pt}{12.234pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{9.211pt}{0.141pt}}%
+\pgfpathlineto{\pgfpoint{9.211pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{13.883pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{13.883pt}{7.805pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{7.805pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{5.641pt}}%
+\pgfpathlineto{\pgfpoint{13.754pt}{5.641pt}}%
+\pgfpathlineto{\pgfpoint{13.754pt}{4.246pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{4.246pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{0.141pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{20.961pt}{4.910pt}}%
+\pgfpathlineto{\pgfpoint{20.961pt}{0.309pt}}%
+\pgfpathcurveto{\pgfpoint{20.352pt}{0.199pt}}{\pgfpoint{19.836pt}{0.117pt}}{\pgfpoint{19.410pt}{0.070pt}}%
+\pgfpathcurveto{\pgfpoint{18.988pt}{0.023pt}}{\pgfpoint{18.605pt}{0.000pt}}{\pgfpoint{18.262pt}{0.000pt}}%
+\pgfpathcurveto{\pgfpoint{17.707pt}{0.000pt}}{\pgfpoint{17.242pt}{0.051pt}}{\pgfpoint{16.859pt}{0.152pt}}%
+\pgfpathcurveto{\pgfpoint{16.477pt}{0.258pt}}{\pgfpoint{16.164pt}{0.410pt}}{\pgfpoint{15.918pt}{0.621pt}}%
+\pgfpathcurveto{\pgfpoint{15.551pt}{0.949pt}}{\pgfpoint{15.285pt}{1.410pt}}{\pgfpoint{15.129pt}{2.004pt}}%
+\pgfpathcurveto{\pgfpoint{14.973pt}{2.602pt}}{\pgfpoint{14.895pt}{3.562pt}}{\pgfpoint{14.895pt}{4.887pt}}%
+\pgfpathcurveto{\pgfpoint{14.895pt}{5.797pt}}{\pgfpoint{14.941pt}{6.508pt}}{\pgfpoint{15.039pt}{7.012pt}}%
+\pgfpathcurveto{\pgfpoint{15.137pt}{7.516pt}}{\pgfpoint{15.297pt}{7.934pt}}{\pgfpoint{15.520pt}{8.270pt}}%
+\pgfpathcurveto{\pgfpoint{15.754pt}{8.617pt}}{\pgfpoint{16.086pt}{8.879pt}}{\pgfpoint{16.508pt}{9.055pt}}%
+\pgfpathcurveto{\pgfpoint{16.930pt}{9.230pt}}{\pgfpoint{17.449pt}{9.316pt}}{\pgfpoint{18.066pt}{9.316pt}}%
+\pgfpathcurveto{\pgfpoint{19.008pt}{9.316pt}}{\pgfpoint{19.727pt}{9.078pt}}{\pgfpoint{20.219pt}{8.609pt}}%
+\pgfpathcurveto{\pgfpoint{20.711pt}{8.137pt}}{\pgfpoint{20.961pt}{7.449pt}}{\pgfpoint{20.961pt}{6.543pt}}%
+\pgfpathlineto{\pgfpoint{20.961pt}{6.406pt}}%
+\pgfpathlineto{\pgfpoint{19.102pt}{6.406pt}}%
+\pgfpathlineto{\pgfpoint{19.102pt}{6.520pt}}%
+\pgfpathcurveto{\pgfpoint{19.102pt}{7.031pt}}{\pgfpoint{19.008pt}{7.410pt}}{\pgfpoint{18.832pt}{7.660pt}}%
+\pgfpathcurveto{\pgfpoint{18.652pt}{7.906pt}}{\pgfpoint{18.379pt}{8.031pt}}{\pgfpoint{18.012pt}{8.031pt}}%
+\pgfpathcurveto{\pgfpoint{17.547pt}{8.031pt}}{\pgfpoint{17.230pt}{7.824pt}}{\pgfpoint{17.055pt}{7.414pt}}%
+\pgfpathcurveto{\pgfpoint{16.883pt}{7.000pt}}{\pgfpoint{16.793pt}{6.094pt}}{\pgfpoint{16.793pt}{4.695pt}}%
+\pgfpathcurveto{\pgfpoint{16.793pt}{3.215pt}}{\pgfpoint{16.898pt}{2.285pt}}{\pgfpoint{17.109pt}{1.902pt}}%
+\pgfpathcurveto{\pgfpoint{17.320pt}{1.520pt}}{\pgfpoint{17.715pt}{1.328pt}}{\pgfpoint{18.293pt}{1.328pt}}%
+\pgfpathcurveto{\pgfpoint{18.422pt}{1.328pt}}{\pgfpoint{18.559pt}{1.340pt}}{\pgfpoint{18.707pt}{1.359pt}}%
+\pgfpathcurveto{\pgfpoint{18.859pt}{1.379pt}}{\pgfpoint{19.031pt}{1.414pt}}{\pgfpoint{19.234pt}{1.461pt}}%
+\pgfpathlineto{\pgfpoint{19.234pt}{3.488pt}}%
+\pgfpathlineto{\pgfpoint{18.191pt}{3.488pt}}%
+\pgfpathlineto{\pgfpoint{18.191pt}{4.910pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{23.707pt}{0.129pt}}%
+\pgfpathlineto{\pgfpoint{21.430pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{23.406pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{24.336pt}{4.473pt}}%
+\pgfpathcurveto{\pgfpoint{24.488pt}{3.703pt}}{\pgfpoint{24.605pt}{3.102pt}}{\pgfpoint{24.680pt}{2.664pt}}%
+\pgfpathcurveto{\pgfpoint{24.750pt}{2.230pt}}{\pgfpoint{24.805pt}{1.840pt}}{\pgfpoint{24.836pt}{1.500pt}}%
+\pgfpathcurveto{\pgfpoint{24.898pt}{2.059pt}}{\pgfpoint{24.969pt}{2.590pt}}{\pgfpoint{25.051pt}{3.090pt}}%
+\pgfpathcurveto{\pgfpoint{25.129pt}{3.586pt}}{\pgfpoint{25.219pt}{4.047pt}}{\pgfpoint{25.316pt}{4.473pt}}%
+\pgfpathlineto{\pgfpoint{26.398pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{28.309pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{25.941pt}{0.129pt}}%
+\pgfpathlineto{\pgfpoint{23.707pt}{0.129pt}}%
+    \pgfseteorule\pgfusepath{fill}%
+  \end{pgfpicture}}
+
+%% ------------------------------------------------------------------
+%% Tipografia
+%% ------------------------------------------------------------------
+\newcommand{\fgvcondensed}{\fontfamily{phv}\fontshape{n}\selectfont}
+
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large,series=\mdseries}
+\setbeamerfont{frametitle}{size=\LARGE,series=\mdseries}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries}
+\setbeamerfont{footline}{size=\scriptsize}
+
+%% ------------------------------------------------------------------
+%% Cores do beamer
+%% ------------------------------------------------------------------
+\setbeamercolor{normal text}{fg=fgvink,bg=white}
+\setbeamercolor{structure}{fg=main}
+\setbeamercolor{alerted text}{fg=fgvcyan!85!black}
+\setbeamercolor{example text}{fg=main}
+\setbeamercolor{frametitle}{fg=main}
+\setbeamercolor{title}{fg=fgvink}
+\setbeamercolor{subtitle}{fg=main}
+\setbeamercolor{author}{fg=fgvink}
+\setbeamercolor{institute}{fg=fgvgray}
+\setbeamercolor{date}{fg=fgvgray}
+\setbeamercolor{block title}{fg=main,bg=fgvlav}
+\setbeamercolor{block body}{fg=fgvink,bg=fgvlav!22}
+\setbeamercolor{block title alerted}{fg=main,bg=fgvcyan!35}
+\setbeamercolor{block body alerted}{fg=fgvink,bg=fgvcyan!8}
+\setbeamercolor{block title example}{fg=main,bg=fgvlav}
+\setbeamercolor{block body example}{fg=fgvink,bg=fgvlav!22}
+\setbeamercolor{item}{fg=main}
+\setbeamercolor{caption name}{fg=main}
+\setbeamercolor{footnote}{fg=fgvgray}
+\setbeamercolor{section in toc}{fg=main}
+\setbeamercolor{section in toc shaded}{fg=main!55}
+\setbeamercolor{subsection in toc shaded}{fg=fgvink!55}
+\setbeamercolor{subsection in toc}{fg=fgvink}
+\setbeamercolor{section number projected}{bg=main,fg=white}
+
+%% ------------------------------------------------------------------
+%% Marcadores
+%% ------------------------------------------------------------------
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\scriptsize$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\tiny$\blacktriangleright$}
+\setbeamertemplate{itemize subsubitem}{\tiny$\blacktriangleright$}
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamertemplate{frametitle continuation}{}
+
+%% ------------------------------------------------------------------
+%% Margens
+%% ------------------------------------------------------------------
+\setbeamersize{text margin left=1.4cm,text margin right=1.4cm}
+
+%% ------------------------------------------------------------------
+%% Barra de titulo
+%% ------------------------------------------------------------------
+\newcommand{\fgv}{}   
+\newif\iffgvnumber    
+\fgvnumberfalse
+
+\setbeamertemplate{headline}{%
+  \ifnum\value{page}=1\relax\else
+  \leavevmode
+  \begin{tikzpicture}[remember picture,overlay]
+    \shade[top color=fgvlav!45,bottom color=white]
+      (current page.north west) rectangle ([yshift=-1.55cm]current page.north east);
+    \fill[main] ([yshift=-1.55cm]current page.north west)
+      rectangle ([yshift=-1.63cm,xshift=-2.35cm]current page.north east);
+    \node[anchor=east,inner sep=0pt] at
+      ([xshift=-1.0cm,yshift=-0.78cm]current page.north east)
+      {\fgvlogo{0.62}};
+  \end{tikzpicture}%
+  \fi}
+
+\setbeamertemplate{frametitle}{%
+  \vbox{%
+    \vskip0.30cm
+    \begin{beamercolorbox}[wd=\paperwidth,ht=1.0cm,dp=0.2cm,leftskip=1.4cm,rightskip=3.4cm]{frametitle}%
+      \fgvcondensed\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}%
+      \iffgvnumber\ifnum\value{section}>0
+        {\color{fgvcyan}\fontseries{b}\selectfont\thesection.}\,%
+      \fi\fi
+      \insertframetitle\par
+    \end{beamercolorbox}%
+    \vskip0.40cm}}
+
+%% ------------------------------------------------------------------
+%% Rodape
+%% ------------------------------------------------------------------
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[fgvlav]
+      ([yshift=0.50cm]current page.south west) rectangle
+      ([yshift=0.455cm]current page.south east);
+    \fill[main]
+      ([yshift=0.60cm]current page.south west) rectangle
+      ([yshift=0.54cm,xshift=-0.3cm]current page.south east);
+    \node[anchor=east,inner sep=0pt,text=fgvgray] at
+      ([xshift=-0.6cm,yshift=0.27cm]current page.south east)
+      {\usebeamerfont{footline}\insertframenumber};
+    \node[anchor=west,inner sep=0pt,text=fgvgray] at
+      ([xshift=1.4cm,yshift=0.27cm]current page.south west)
+      {\usebeamerfont{footline}\insertshortauthor};
+  \end{tikzpicture}%
+  \vskip0.7cm}
+
+%% ------------------------------------------------------------------
+%% Blocos
+%% ------------------------------------------------------------------
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{block begin}{%
+  \par\vskip\medskipamount
+  \begin{beamercolorbox}[colsep*=0pt,leftskip=0pt,rightskip=0pt,wd=\textwidth]{block title}%
+    \begin{tikzpicture}[baseline=(t.base)]
+      \node[inner sep=0pt] (t) {\strut};
+    \end{tikzpicture}%
+    \hspace*{0.22cm}\raisebox{0.02cm}{\color{main}$\Rightarrow$}\hspace*{0.2cm}%
+    \usebeamerfont{block title}\insertblocktitle\strut\hfill
+  \end{beamercolorbox}%
+  \nointerlineskip
+  \begin{beamercolorbox}[colsep=0.25cm,vmode,wd=\textwidth]{block body}%
+    \ifbeamercolorempty[bg]{block body}{}{\vskip0.05cm}
+    \usebeamerfont{block body}}
+\setbeamertemplate{block end}{%
+    \vskip0.05cm
+  \end{beamercolorbox}%
+  \vskip\medskipamount}
+
+%% ------------------------------------------------------------------
+%% Pagina de titulo
+%% ------------------------------------------------------------------
+\newcommand{\fgvband}{Apresentação}   % texto vertical da faixa
+
+\setbeamertemplate{title page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \shade[top color=fgvlav!35,bottom color=white,shading angle=0]
+      (current page.south west) rectangle (current page.north east);
+    \begin{scope}[opacity=0.07]
+      \node[inner sep=0pt,anchor=center] at
+        ([xshift=1.0cm,yshift=3.3cm]current page.center) {\fgvlogo[main]{4.2}};
+    \end{scope}
+    \fill[main] ([xshift=-3.3cm]current page.north east) rectangle
+      (current page.south east);
+    \node[rotate=90,text=white,inner sep=0pt,anchor=west] at
+      ([xshift=-1.65cm,yshift=3.7cm]current page.south east)
+      {\fgvcondensed\itshape\fontsize{20}{20}\selectfont\MakeUppercase{\fgvband}};
+    \node[anchor=south,inner sep=0pt] at
+      ([xshift=-1.65cm,yshift=1.1cm]current page.south east)
+      {\fgvlogo[white]{1.35}};
+    \node[anchor=south west,text width=\paperwidth-7.4cm,inner sep=0pt] at
+      ([xshift=1.4cm,yshift=5.25cm]current page.south west)
+      {\raggedright\usebeamercolor[fg]{title}\fgvcondensed\usebeamerfont{title}\inserttitle\par
+       \vspace{0.15cm}
+       \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\insertsubtitle};
+    \fill[main] ([xshift=1.4cm,yshift=4.95cm]current page.south west)
+      rectangle ([xshift=-3.3cm,yshift=4.88cm]current page.south east);
+    \node[anchor=north west,text width=\paperwidth-7.4cm,inner sep=0pt] at
+      ([xshift=1.4cm,yshift=4.65cm]current page.south west)
+      {\raggedright\usebeamercolor[fg]{author}\insertauthor\par
+       \vspace{0.2cm}
+       \usebeamercolor[fg]{institute}\footnotesize\insertinstitute\par
+       \vspace{0.15cm}
+       \usebeamercolor[fg]{date}\insertdate};
+  \end{tikzpicture}}
+
+%% ------------------------------------------------------------------
+%% Quadro de destaque
+%% ------------------------------------------------------------------
+\newenvironment{fgvfocus}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[main] (current page.south west) rectangle (current page.north east);
+    \node[anchor=south east,inner sep=0pt] at
+      ([xshift=-1.0cm,yshift=0.8cm]current page.south east)
+      {\fgvlogo[white]{1.1}};
+  \end{tikzpicture}%
+  \color{white}%
+  \begin{center}\fgvcondensed\fontsize{30}{36}\selectfont
+}{\end{center}}
+
+%% ------------------------------------------------------------------
+%% Sumario por secao
+%% ------------------------------------------------------------------
+\setbeamertemplate{section in toc}{%
+  {\fgvcondensed\bfseries\color{main}\MakeUppercase{Capítulo}\ \inserttocsectionnumber\ ::\ \inserttocsection}\par}
+\setbeamertemplate{subsection in toc}{%
+  \hspace*{1.2em}\inserttocsectionnumber.\inserttocsubsectionnumber\hspace{0.8em}\inserttocsubsection\par}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Sumário}
+    \tableofcontents[currentsection,hideothersubsections]
+  \end{frame}
+}
+\AtBeginSubsection[]{}
+
+%% ------------------------------------------------------------------
+%% Dados da apresentacao
+%% ------------------------------------------------------------------
+\title{Mapeamento do Fluxo Ofensivo no Futebol:\\Uma Abordagem via PageRank}
+
+% Remoção da enumeração e correção ortográfica (Allberti -> Alberti, Josue -> Josué)
+\author[E. Alberti, J. Santos, L. Bicca \& L. Porto]{%
+        Erick Alberti\footnote{\label{fgv}Fundação Getulio Vargas, Rio de Janeiro, Brasil},
+        Josué Santos\textsuperscript{\ref{fgv}},
+        Leonardo Bicca\textsuperscript{\ref{fgv}} \&
+        Luigi Porto\textsuperscript{\ref{fgv}}}
+\institute{Apresentado por: Erick Alberti, Josué Santos, Leonardo Bicca e Luigi Porto}
+\date{19 de novembro de 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\section{Introdução e Motivação}
+
+% =====================================================
+\subsection{O Algoritmo PageRank}
+\subsubsection{O que é o PageRank}
+% =====================================================
+
+\begin{frame}{O algoritmo PageRank}
+\begin{itemize}
+    \setlength{\itemsep}{\medskipamount} % Automatiza o espaçamento
+    \item Desenvolvido para classificar páginas da internet
+    segundo sua relevância, sendo um dos fundamentos
+    originais do mecanismo de busca do Google.
+
+    \item A estrutura da internet é representada por um
+    grafo direcionado, no qual:
+    \begin{itemize}
+        \item Os vértices representam páginas;
+        \item As arestas representam links entre páginas.
+    \end{itemize}
+
+    \item O princípio fundamental do algoritmo é que
+    uma página é considerada mais relevante quando
+    recebe referências de outras páginas relevantes.
+
+    \item O resultado é uma distribuição de pontuações,
+    denominada \textit{PageRank}, que permite
+    ordenar os vértices segundo sua relevância.
+\end{itemize}
+\end{frame}
+
+% =====================================================
+
+% -----------------------------------------------------------
+% SEÇÃO 2: MODELAGEM E FUNDAMENTAÇÃO MATEMÁTICA
+% -----------------------------------------------------------
+\section{Modelagem e Fundamentação Matemática}
+  
+  \subsection{Definições de Teoria dos Grafos}
+
+    \begin{frame}{Estruturas Básicas de Teoria dos Grafos}
+      Para compreender redes complexas, iniciamos com as definições estruturais mais fundamentais:
+      \vfill
+      \begin{itemize}
+        \setlength{\itemsep}{\medskipamount}
+        \item \textbf{Grafo ($G$):} Um par ordenado $G = (V, E)$, onde $V$ é um conjunto não-vazio de \textbf{vértices} (ou nós) e $E$ é um conjunto de \textbf{arestas} que conectam pares de vértices.
+        \item \textbf{Digrafo (Grafo Direcionado):} Um grafo $D = (V, A)$ cujas conexões possuem direção. O conjunto $A$ é formado por \textbf{arcos} (arestas direcionadas), representados por pares ordenados $(u, v)$.
+        \item \textbf{Grau de um Vértice:} O número de arestas incidentes a ele. Em digrafos, distingue-se o \textbf{grau de saída} ($d^+$) e o \textbf{grau de entrada} ($d^-$).
+      \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Representação Matricial e Conectividade}
+      \begin{itemize}
+        \setlength{\itemsep}{\medskipamount}
+        \item \textbf{Matriz de Adjacência ($A$):} Uma matriz $n \times n$ (onde $n = |V|$) que representa as conexões do grafo de forma algébrica. Para um digrafo:
+          \begin{equation*}
+             A_{ij} = \begin{cases} 1, & \text{se existe um arco de } v_j \text{ para } v_i \\ 0, & \text{caso contrário} \end{cases}
+          \end{equation*}
+        \item \textbf{Conectividade Forte:} Um digrafo é fortemente conexo se, para todo par de vértices distintos $u, v \in V$, existe um caminho direcionado de $u$ para $v$ e um de $v$ para $u$. Isso assegura a ausência de nós sem saída na rede.
+      \end{itemize}
+    \end{frame}
+
+  \subsection{Definições de Álgebra Linear}
+
+    \begin{frame}{Vetores e Matrizes como Operadores}
+      As definições estritamente necessárias para operar sobre a estrutura do grafo:
+      \vfill
+      \begin{itemize}
+        \setlength{\itemsep}{\medskipamount}
+        \item \textbf{Espaço Vetorial e Vetores:} Elementos de $\mathbb{R}^n$, representados como vetores-coluna. Neste contexto, atuam para denotar estados do sistema ou distribuições de probabilidade sobre os vértices.
+        \item \textbf{Matriz Estocástica ($M$):} Matriz quadrada em que a soma dos elementos de cada coluna é exatamente 1 ($\sum_{i} M_{ij} = 1$) e onde $M_{ij} \ge 0$. Ela atua como o operador linear que mapeia o estado atual da rede para o próximo.
+      \end{itemize}
+    \end{frame}
+
+    \begin{frame}{Autovalores, Autovetores e o Teorema Fundamental}
+      
+      \begin{definicao}[Autovalores e Autovetores]
+        Um escalar $\lambda$ é um autovalor de uma matriz quadrada $M$ se existe um vetor não-nulo $x$ (o autovetor) tal que:
+        \begin{equation}
+            M x = \lambda x
+        \end{equation}
+      \end{definicao}
+      
+      \vfill
+      
+      \begin{teorema}[Perron-Frobenius]
+        Para matrizes estocásticas por colunas com entradas estritamente positivas:
+        \begin{itemize}
+            \item O maior autovalor (autovalor dominante) é sempre $\lambda = 1$.
+            \item Existe um autovetor único correspondente a $\lambda = 1$ cujas entradas são todas estritamente positivas.
+        \end{itemize}
+      \end{teorema}
+      
+    \end{frame}
+\subsubsection{A estrutura matemática do PageRank}
+% =====================================================
+
+\begin{frame}{O modelo probabilístico}
+\begin{itemize}
+    \setlength{\itemsep}{\medskipamount}
+    \item Considere um grafo direcionado com $n$ vértices.
+    Seja $X_k$ a variável aleatória que representa
+    o vértice ocupado após $k$ movimentos.
+
+    \item A distribuição de probabilidade de $X_k$
+    é representada pelo vetor:
+    \[
+    \mathbf{r}^{(k)} =
+    \begin{pmatrix}
+    \mathbb{P}(X_k=1)\\
+    \mathbb{P}(X_k=2)\\
+    \vdots\\
+    \mathbb{P}(X_k=n)
+    \end{pmatrix}
+    \]
+
+    \item Admitindo a propriedade de Markov, definimos
+    a matriz de transição $P$, cujas entradas são:
+    \[
+    P_{ij} = \mathbb{P}(X_{k+1}=i\mid X_k=j)
+    \]
+
+    \item Assim, $P_{ij}$ representa a probabilidade
+    de transição do vértice $j$ para o vértice $i$,
+    com $\sum_{i=1}^{n}P_{ij}=1$.
+\end{itemize}
+\end{frame}
+
+% =====================================================
+
+\begin{frame}{A estrutura matemática do PageRank}
+\begin{itemize}
+    \setlength{\itemsep}{\medskipamount}
+    \item O algoritmo introduz o teletransporte:
+    com probabilidade $\alpha$, seguimos uma aresta;
+    com probabilidade $1-\alpha$, escolhemos um vértice
+    segundo a distribuição $\mathbf{v}$.
+
+    \item A matriz de Google, que incorpora ambos
+    os mecanismos, é definida por:
+    \[
+    G = \alpha P + (1-\alpha)\mathbf{v}\mathbf{1}^{T}
+    \]
+
+    \item O PageRank é a distribuição estacionária
+    dessa matriz de transição, isto é, um vetor
+    $\mathbf{r}$ que satisfaz:
+    \[
+    G\mathbf{r}=\mathbf{r}
+    \]
+
+    \item Portanto, $\mathbf{r}$ é um autovetor de $G$
+    associado ao autovalor $1$, normalizado de modo que:
+    \[
+    \sum_{i=1}^{n}r_i=1
+    \]
+\end{itemize}
+\end{frame}
+
+
+
+\subsection{Dedução da fórmula do PageRank}
+
+% =====================================================
+\subsubsection{O caso mais simples}
+% =====================================================
+
+\begin{frame}{O caso mais simples: sem teletransporte}
+\begin{itemize}
+    \setlength{\itemsep}{\medskipamount}
+    \item Queremos determinar a distribuição de probabilidade
+    após $k+1$ movimentos, a partir da distribuição no instante $k$.
+
+    \item Pela lei da probabilidade total:
+    \[
+    \mathbb{P}(X_{k+1}=i) = \sum_{j=1}^{n} \mathbb{P}(X_{k+1}=i\mid X_k=j) \mathbb{P}(X_k=j)
+    \]
+
+    \item Utilizando as definições anteriores:
+    \[
+    r_i^{(k+1)} = \sum_{j=1}^{n}P_{ij}r_j^{(k)}
+    \]
+
+    \item Portanto, em notação matricial:
+    \[
+    \boxed{ \mathbf{r}^{(k+1)}=P\mathbf{r}^{(k)} }
+    \]
+\end{itemize}
+\end{frame}
+
+
+% =====================================================
+\subsubsection{O caso geral (com teletransporte)}
+% =====================================================
+
+\begin{frame}{O caso geral: com teletransporte}
+\begin{itemize}
+    \setlength{\itemsep}{\medskipamount}
+    \item Introduzimos dois mecanismos de movimento:
+    seguir uma aresta ($M$) ou realizar um teletransporte ($T$).
+
+    \item Pela lei da probabilidade total:
+    \[
+    \begin{aligned}
+    \mathbb{P}(X_{k+1}=i) ={}& \mathbb{P}(X_{k+1}=i\mid M)\alpha\\
+    &+\mathbb{P}(X_{k+1}=i\mid T)(1-\alpha)
+    \end{aligned}
+    \]
+
+    \item Substituindo as probabilidades de cada mecanismo:
+    \[
+    r_i^{(k+1)} = \alpha\sum_{j=1}^{n}P_{ij}r_j^{(k)} +(1-\alpha)v_i
+    \]
+
+    \item Finalmente, em notação matricial:
+    \[
+    \boxed{ \mathbf{r}^{(k+1)} = \alpha P\mathbf{r}^{(k)} +(1-\alpha)\mathbf{v} }
+    \]
+\end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------
+% SEÇÃO 4: APLICAÇÃO E ANÁLISE DE RESULTADOS
+% -----------------------------------------------------------
+\section{Aplicação e Análise de Resultados}
+
+  \begin{frame}{Resultados do Mapeamento Ofensivo}
+    % Substitua este slide pelas tabelas ou gráficos da sua análise de PageRank
+    \begin{itemize}
+        \item Espaço reservado para visualização do grafo de passes.
+        \item Espaço reservado para a tabela dos jogadores com maior escore de PageRank no fluxo ofensivo.
+    \end{itemize}
+  \end{frame}
+
+% -----------------------------------------------------------
+% SEÇÃO 5: CONCLUSÃO E TRABALHOS FUTUROS
+% -----------------------------------------------------------
+\section{Conclusão e Trabalhos Futuros}
+
+  \begin{frame}{Conclusões}
+    % Substitua este slide pelas conclusões
+    \begin{itemize}
+        \item Espaço reservado para as considerações finais.
+        \item Espaço reservado para possíveis melhorias e trabalhos futuros na modelagem.
+    \end{itemize}
+  \end{frame}
+
+\section{Referências}
+
+\begin{frame}[plain]
+  \begin{fgvfocus}
+    Obrigado! \\
+    Perguntas?
+  \end{fgvfocus}
+\end{frame}
+
+\end{document}
