@@ -1,0 +1,718 @@
+\documentclass[10pt,a4paper]{article}
+% Import dos pacotes
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+\babelprovide[import, main]{portuguese}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[a4paper, top=1.9cm, bottom=1.9cm, left=2.0cm, right=2.0cm, headheight=26pt]{geometry}
+\usepackage{amsmath, amssymb, amsfonts, amsthm, mathtools}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{hyperref}
+%Configurações visuais
+\definecolor{fgvblue}{RGB}{0, 56, 147}
+\definecolor{codebg}{RGB}{244, 246, 248}
+\definecolor{codegreen}{RGB}{34, 139, 34}
+\definecolor{codepurple}{RGB}{128, 0, 128}
+\definecolor{codeorange}{RGB}{180, 70, 0}
+\definecolor{codegray}{RGB}{110, 110, 110}
+\definecolor{framegray}{RGB}{200, 205, 212}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=fgvblue,
+    citecolor=fgvblue,
+    urlcolor=fgvblue,
+    pdftitle={Mapeamento do Fluxo Ofensivo no Futebol: Aplicando PageRank em Redes de Passes},
+    pdfauthor={Erick Alberti, Josue Santos, Leonardo Bicca, Luigi Porto}
+}
+%Rodapé
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textbf{Erick Alberti, Josué Santos,\\Leonardo Bicca, Luigi Porto} ---}
+\fancyhead[R]{\small\textbf{Mapeamento do fluxo ofensivo no futebol:\\Aplicando PageRank em Redes de Passes}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+%pacotes matemática
+\theoremstyle{definition}
+\newtheorem{definicao}{Definição}[section]
+\newtheorem{exemplo}[definicao]{Exemplo}
+
+\theoremstyle{plain}
+\newtheorem{teorema}[definicao]{Teorema}
+\newtheorem{lema}[definicao]{Lema}
+\newtheorem{proposicao}[definicao]{Proposição}
+\newtheorem{corolario}[definicao]{Corolário}
+
+\theoremstyle{remark}
+\newtheorem*{observacao}{Observação}
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{codegreen}\itshape,
+    keywordstyle=\color{fgvblue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codeorange},
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=7pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    frame=single,
+    rulecolor=\color{codebg},
+    xleftmargin=10pt,
+    framexleftmargin=10pt,
+    aboveskip=5pt,
+    belowskip=5pt,
+    literate=
+      {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+      {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+      {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+      {ã}{{\~a}}1 {õ}{{\~o}}1 {Ã}{{\~A}}1 {Õ}{{\~O}}1
+      {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+      {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+      {ç}{{\c{c}}}1 {Ç}{{\c{C}}}1 {ª}{{\textordfeminine}}1 {º}{{\textordmasculine}}1
+}
+\lstset{style=pythonstyle}
+
+\setlength{\parskip}{1.6pt plus 0.5pt minus 0.5pt}
+\setlength{\parindent}{1.2em}
+\sloppy
+
+\begin{document}
+
+%Capa
+\thispagestyle{plain}
+\vspace*{3.2cm}
+\begin{center}
+    {\LARGE\sffamily\bfseries Encontrando o Jogador Mais Importante em Campo:\\[0.25cm]
+   Aplicando PageRank em Redes de Passes\par}
+    \vspace{1.2cm}
+    {\large\scshape Erick Alberti, Josué Santos,\\[0.15cm]
+    Leonardo Bicca, Luigi Porto\par}
+    \vspace{0.4cm}
+    {\normalsize\scshape Fundação Getulio Vargas --- FGV EMAp\par}
+\end{center}
+\vfill
+\newpage
+%Sumário
+\renewcommand{\contentsname}{\sffamily\bfseries Conteúdo}
+\tableofcontents
+\newpage
+%Definições
+\setcounter{section}{-1}
+\section{\sffamily Definições e notação}
+
+Para estabelecer uma fundamentação matemática rigorosa sobre a qual repousam a modelagem de redes de passes e o algoritmo PageRank, adotamos a terminologia estrutural da Teoria dos Grafos conforme sistematizada por Wilson \cite{wilson1996} e West \cite{west2001}, articulada com a formulação matricial e espectral da Álgebra Linear de Strang \cite{strang2016} e Axler \cite{axler2015}.
+
+\begin{definicao}[Grafo Direcionado e Grafo Ponderado]
+Um \textbf{grafo direcionado} (ou \textbf{digrafo}) sem pesos é uma tupla ordenada $G = (V, E)$, onde $V = V(G)$ é um conjunto finito e não vazio de elementos denominados \textbf{vértices} (ou nós), com cardinalidade $n = |V|$, e $E = E(G) \subseteq V \times V$ é um conjunto de pares ordenados de vértices denominados \textbf{arestas direcionadas} (ou arcos). Para uma aresta $e = (u, v) \in E$, dizemos que $e$ é incidente a partir de $u$ (cauda) e incidente em direção a $v$ (cabeça).
+
+Um \textbf{grafo direcionado com pesos} (ou digrafo ponderado) é definido pela tripla $G = (V, E, w)$, onde $w : E \to \mathbb{R}_{+}$ é uma função de ponderação não negativa que associa a cada aresta direcionada $(u, v) \in E$ um escalar real $w(u, v) \ge 0$, denominado peso da aresta. Quando $(u, v) \notin E$, convencionamos estender o domínio de $w$ a todo $V \times V$ impondo $w(u, v) = 0$.
+\end{definicao}
+
+\begin{definicao}[Passeios, Caminhos e Ciclos Direcionados]
+Dado um digrafo ponderado $G = (V, E, w)$, um \textbf{passeio direcionado} de comprimento $k \in \mathbb{N}$ de um vértice $v_0$ a um vértice $v_k$ é uma sequência finita de vértices $W = (v_0, v_1, \dots, v_k)$ tal que $(v_{i-1}, v_i) \in E(G)$ para todo $1 \le i \le k$. O peso acumulado do passeio é dado por $w(W) := \sum_{i=1}^{k} w(v_{i-1}, v_i)$.
+
+Um \textbf{caminho direcionado} $P = (v_0, v_1, \dots, v_k)$ é um passeio direcionado no qual todos os vértices são distintos entre si, isto é, $v_i \neq v_j$ para quaisquer $0 \le i < j \le k$. Um \textbf{ciclo direcionado} de comprimento $k \ge 1$ é um passeio fechado $(v_0, v_1, \dots, v_{k-1}, v_0)$ em que os vértices intermediários $v_0, v_1, \dots, v_{k-1}$ são distintos dois a dois.
+\end{definicao}
+
+\begin{definicao}[Graus de Entrada e Saída Ponderados]
+Seja $G = (V, E, w)$ um digrafo ponderado com $V = \{1, 2, \dots, n\}$. Para cada vértice $u \in V$, definimos a vizinhança de saída $N^{+}(u) = \{v \in V : (u, v) \in E\}$ e a vizinhança de entrada $N^{-}(u) = \{v \in V : (v, u) \in E\}$. O \textbf{grau de saída ponderado} (ou força de saída) $d^{+}_{w}(u)$ e o \textbf{grau de entrada ponderado} (ou força de entrada) $d^{-}_{w}(u)$ são definidos, respectivamente, por:
+\[
+d^{+}_{w}(u) := \sum_{v \in N^{+}(u)} w(u, v) = \sum_{v \in V} w(u, v), \qquad d^{-}_{w}(u) := \sum_{v \in N^{-}(u)} w(v, u) = \sum_{v \in V} w(v, u).
+\]
+No caso particular não ponderado em que $w \equiv 1$ sobre $E$, recuperamos os graus combinatórios clássicos $d^{+}(u) = |N^{+}(u)|$ e $d^{-}(u) = |N^{-}(u)|$. Um vértice $u \in V$ tal que $d^{+}_{w}(u) = 0$ é chamado de \textbf{nó pendente} (\textit{dangling node}) ou estado absorvente da rede.
+\end{definicao}
+
+\begin{definicao}[Conectividade Forte]
+Um digrafo $G = (V, E)$ é dito \textbf{fortemente conexo} se, para todo par ordenado de vértices distintos $(u, v) \in V \times V$, existe ao menos um caminho direcionado em $G$ que parte de $u$ e atinge $v$. Uma \textbf{componente fortemente conexa} de $G$ é um subgrafo induzido maximal $H \subseteq G$ que é fortemente conexo.
+\end{definicao}
+
+\begin{definicao}[Matriz de Adjacência Ponderada]
+Fixada uma enumeração $V = \{v_1, v_2, \dots, v_n\}$ dos vértices de $G = (V, E, w)$, a \textbf{matriz de adjacência ponderada} $W \in \mathbb{R}^{n \times n}_{+}$ é a matriz quadrada cujas entradas são dadas por $W_{ij} = w(v_i, v_j)$ para todos $1 \le i, j \le n$. Assim, a soma da $i$-ésima linha de $W$ corresponde exatamente ao grau de saída ponderado $d^{+}_{w}(v_i) = \sum_{j=1}^{n} W_{ij}$, enquanto a soma da $j$-ésima coluna corresponde ao grau de entrada ponderado $d^{-}_{w}(v_j) = \sum_{i=1}^{n} W_{ij}$.
+\end{definicao}
+
+\begin{definicao}[Cadeia de Markov de Tempo Discreto e Matriz de Transição]
+Uma \textbf{Cadeia de Markov de tempo discreto} homogênea sobre um espaço de estados finito $S = \{1, 2, \dots, n\}$ é um processo estocástico $\{X_t\}_{t \in \mathbb{N}_0}$ que satisfaz a \textbf{Propriedade de Markov} (ausência de memória): para todo $t \ge 0$ e toda sequência de estados $i_0, i_1, \dots, i_{t-1}, i, j \in S$,
+\[
+\mathbb{P}(X_{t+1} = j \mid X_t = i, X_{t-1} = i_{t-1}, \dots, X_0 = i_0) = \mathbb{P}(X_{t+1} = j \mid X_t = i) =: P_{ij}.
+\]
+Na convenção de álgebra linear por colunas adotada na literatura de recuperação de informação e análise espectral de redes \cite{brin1998, langville2006}, definimos a \textbf{matriz de transição estocástica por colunas} $M \in \mathbb{R}^{n \times n}$ associada ao digrafo $G = (V, E, w)$ por:
+\[
+M_{ij} := \begin{cases}
+\dfrac{w(j, i)}{d^{+}_{w}(j)}, & \text{se } d^{+}_{w}(j) > 0, \\[0.25cm]
+0, & \text{se } d^{+}_{w}(j) = 0,
+\end{cases}
+\]
+onde $M_{ij} = \mathbb{P}(X_{t+1} = i \mid X_t = j)$ representa a probabilidade de transição em um passo do vértice $j$ para o vértice $i$. Quando $d^{+}_{w}(j) > 0$ para todo $j \in V$, todas as colunas de $M$ somam $1$, isto é, $\mathbf{1}^{\top} M = \mathbf{1}^{\top}$, onde $\mathbf{1} = (1, 1, \dots, 1)^{\top} \in \mathbb{R}^n$, caracterizando $M$ como uma \textbf{matriz estocástica por colunas}.
+\end{definicao}
+
+\begin{definicao}[Irredutibilidade, Aperiodicidade e Distribuição Estacionária]
+Seja $M \in \mathbb{R}^{n \times n}$ uma matriz estocástica por colunas associada a uma Cadeia de Markov sobre $V$:
+\begin{enumerate}
+    \item A cadeia (e a matriz $M$) é dita \textbf{irredutível} se o digrafo subjacente é fortemente conexo, o que equivale a afirmar que para todo par $(i, j) \in V \times V$ existe um inteiro $k = k(i, j) \ge 1$ tal que $(M^k)_{ij} > 0$.
+    \item O \textbf{período} de um estado $i \in V$ é definido por $d(i) := \gcd\{k \ge 1 : (M^k)_{ii} > 0\}$. O estado $i$ é dito \textbf{aperiódico} se $d(i) = 1$. Uma cadeia irredutível na qual todos os estados têm período $1$ é chamada de \textbf{ergódica} (ou primitiva), propriedade equivalente à existência de um inteiro $k_0 \ge 1$ tal que $M^{k_0} > 0$ (todas as entradas estritamente positivas).
+    \item Um vetor de probabilidade $\pi \in \mathbb{R}^n$, satisfazendo $\pi_i \ge 0$ para todo $i$ e $\|\pi\|_1 = \sum_{i=1}^{n} \pi_i = 1$, é chamado de \textbf{distribuição estacionária} da cadeia se é um ponto fixo do operador linear de transição, ou seja:
+    \[
+    M \pi = \pi.
+    \]
+\end{enumerate}
+\end{definicao}
+
+%Introdução
+\section{\sffamily Introdução}
+
+A avaliação quantitativa da importância individual de atletas em esportes coletivos de invasão, particularmente no futebol profissional, constitui um dos problemas mais desafiadores da Ciência de Dados aplicada ao esporte (\textit{Sports Analytics}). Historicamente, a análise de desempenho fundamentou-se em estatísticas descritivas univariadas e discretas --- tais como número de gols marcados, assistências diretas, total de passes completados ou distância percorrida. Embora úteis para sintetizar eventos terminais de uma partida, tais métricas sofrem de um viés reducionista severo: elas tratam as ações dos jogadores de maneira isolada e ignoram a natureza intrinsecamente relacional, sequencial e interdependente da construção ofensiva.
+
+Sob a ótica da Matemática Aplicada e da Teoria dos Grafos, uma equipe de futebol em posse de bola opera como um sistema dinâmico complexo estruturado em rede \cite{pena2012, buldu2018}. Cada jogador em campo atua como um centro de processamento e redistribuição de fluxo (um vértice $v \in V$), enquanto os passes concluídos estabelecem canais direcionados de transferência de posse (arestas $e \in E$). A eficiência coletiva de uma equipe não emerge apenas da capacidade de finalização de seu centroavante, mas fundamentalmente da arquitetura topológica de sua rede de passes: a capacidade dos defensores e meio-campistas de romper linhas de marcação sob pressão, progredir territorialmente em direção à baliza adversária e abastecer zonas de alta probabilidade de conversão.
+
+Nesse contexto, algoritmos de centralidade espectral desenvolvidos originalmente para a ciência da computação e recuperação de informação oferecem um arcabouço matemático rigoroso para quantificar a relevância estrutural de cada atleta. Destaca-se, de forma paradigmática, o algoritmo \textbf{PageRank}, concebido por Brin e Page \cite{brin1998} para classificar páginas na World Wide Web. A premissa axiomática do PageRank adapta-se perfeitamente à dinâmica tática do futebol: um jogador é estruturalmente importante não apenas porque recebe muitos passes, mas porque recebe passes de companheiros que, por sua vez, também são centrais na circulação de bola, ponderados pela qualidade tática de cada conexão.
+
+Este artigo desenvolve uma modelagem estocástica completa do fluxo ofensivo no futebol utilizando o algoritmo PageRank sobre digrafos ponderados. Expandimos a abordagem clássica de redes de passes não ponderadas ao integrar uma engenharia de atributos multi-escala construída sobre a base de dados de eventos de alta granularidade da StatsBomb (\textit{StatsBomb Open Data}). Formalizamos e implementamos quatro regimes de ponderação de arestas: (i) volume bruto de passes; (ii) um índice de peso tático composto que incorpora ganho de proximidade euclidiana ao gol, fator multiplicativo de resistência à pressão ($1.5\times$) e bonificação para passes que geram finalizações ($+5.0$); (iii) geração de ameaça territorial via a grade $8 \times 12$ de \textit{Expected Threat} ($xT$) de Karun Singh \cite{singh2018}; e (iv) contribuição probabilística para gols via \textit{Expected Goals} da posse ($xGChain$) e \textit{Expected Assists} ($xA$). Ademais, propomos um estimador empírico endógeno para o fator de amortecimento $\alpha$ baseado na taxa de retenção de posse da equipe e aplicamos um protocolo de isolamento temporal até a primeira substituição para preservar a estacionariedade topológica do grafo nos jogos eliminatórios da Seleção Argentina campeã da Copa do Mundo FIFA de 2022.
+
+%Algoritmo
+\section{\sffamily O Algoritmo PageRank}
+
+\subsection{\sffamily Formulação Matemática e a Matriz de Google}
+
+Considere um digrafo ponderado $G = (V, E, w)$ com $n = |V|$ vértices sem arestas de peso negativo. O objetivo central do algoritmo PageRank é atribuir a cada vértice $i \in V$ um escore numérico de centralidade $\pi_i > 0$, interpretado como a fração de tempo que um caminhante aleatório (\textit{random walker}) gasta no vértice $i$ no limite assintótico de uma caminhada infinita sobre o grafo.
+
+Na formulação ingênua de uma Cadeia de Markov governada exclusivamente pela matriz de transição bruta $M$ definida na Definição 0.6, a distribuição de probabilidade dos estados no instante $t+1$ evolui segundo a recorrência linear $\pi^{(t+1)} = M \pi^{(t)}$. Contudo, grafos empíricos extraídos de redes reais --- sejam hiperlinks da Web ou redes de passes de uma partida de futebol --- violam frequentemente as hipóteses de ergodicidade necessárias para que a iteração $\pi^{(t+1)} = M \pi^{(t)}$ convirja para um único vetor estacionário estritamente positivo, apresentando duas patologias topológicas clássicas:
+
+\begin{enumerate}
+    \item \textbf{Nós Pendentes (\textit{Dangling Nodes}):} Se um vértice $j \in V$ não possui arestas de saída ($d^{+}_{w}(j) = 0$), a $j$-ésima coluna da matriz $M$ é inteiramente nula ($M_{\cdot j} = \mathbf{0}$). Nesse caso, $M$ é uma matriz subestocástica, e a massa total de probabilidade $\|\pi^{(t)}\|_1$ dissipa-se progressivamente a cada visita ao estado $j$, convergindo para o vetor nulo.
+    \item \textbf{Armadilhas Topológicas (\textit{Spider Traps}) e Componentes Absorventes:} Se o digrafo $G$ não é fortemente conexo, ele pode conter subgrafos fechados $C \subsetneq V$ sem arestas de saída para $V \setminus C$, ou ciclos periódicos que impedem a mistura global da cadeia. Toda a massa de probabilidade acaba retida em $C$, atribuindo centralidade nula aos demais vértices da rede.
+\end{enumerate}
+
+Para erradicar simultaneamente ambas as anomalias e garantir que a cadeia resultante seja irredutível e aperiódica sobre qualquer topologia de grafo, Brin e Page \cite{brin1998} introduziram a regularização de teletransporte mediante o \textbf{fator de amortecimento} (\textit{damping factor}) $\alpha \in (0, 1)$. Primeiramente, corrige-se a subestocasticidade dos nós pendentes substituindo cada coluna nula de $M$ por um vetor de distribuição de probabilidade de reinício $v \in \mathbb{R}^n$ (com $v_i > 0$ e $\sum_{i=1}^{n} v_i = 1$), obtendo a matriz estocástica ajustada $\widetilde{M}$:
+\begin{equation}
+\widetilde{M} := M + v d^{\top}, \quad \text{onde } d_j = \begin{cases} 1, & \text{se } d^{+}_{w}(j) = 0, \\ 0, & \text{caso contrário.} \end{cases}
+\label{eq:m_tilde}
+\end{equation}
+
+Em seguida, modela-se o comportamento do caminhante aleatório em cada passo discreto como uma mistura convexa: com probabilidade $\alpha$, o processo segue as arestas do grafo segundo as probabilidades de transição de $\widetilde{M}$; com probabilidade complementar $1 - \alpha$, o caminhante interrompe a sequência atual e ``teletransporta-se'' para um vértice da rede sorteado segundo a distribuição de personalização (ou teletransporte) $v$. Obtemos assim o operador linear conhecido como \textbf{Matriz de Google} $G_{\alpha} \in \mathbb{R}^{n \times n}$:
+\begin{equation}
+G_{\alpha} := \alpha \widetilde{M} + (1 - \alpha) v \mathbf{1}^{\top}.
+\label{eq:google_matrix}
+\end{equation}
+
+Como todo vetor de probabilidade $\pi \in \mathbb{R}^n$ satisfaz a condição de normalização $\mathbf{1}^{\top} \pi = \sum_{j=1}^{n} \pi_j = 1$, a aplicação de $G_{\alpha}$ sobre $\pi$ resulta na equação fundamental do PageRank:
+\begin{equation}
+\pi = G_{\alpha} \pi = \alpha \widetilde{M} \pi + (1 - \alpha) v.
+\label{eq:pagerank_vector}
+\end{equation}
+Escrevendo a Equação (\ref{eq:pagerank_vector}) coordenada a coordenada para um grafo sem nós pendentes ($d = \mathbf{0}$) e com teletransporte uniforme $v_i = 1/n$, recuperamos a célebre expressão algébrica do PageRank de cada vértice $i \in V$:
+\begin{equation}
+\pi_i = \alpha \sum_{j \in N^{-}(i)} \frac{w(j, i)}{d^{+}_{w}(j)} \pi_j + \frac{1 - \alpha}{n}, \qquad \forall i \in \{1, 2, \dots, n\}.
+\label{eq:pagerank_scalar}
+\end{equation}
+
+Apresentamos a seguir a formulação algorítmica completa do método iterativo das potências (\textit{Power Iteration}) utilizado para computar o vetor de PageRank $\pi$:
+
+\vspace{0.1cm}
+\noindent\rule{\linewidth}{0.8pt}\\[-0.25cm]
+\textbf{Algorithm 1} Algoritmo PageRank Ponderado via Método das Potências\\[-0.3cm]
+\noindent\rule{\linewidth}{0.4pt}
+\begin{tabbing}
+\hspace{0.5cm} \= \hspace{0.5cm} \= \hspace{0.5cm} \= \hspace{0.5cm} \= \kill
+{\footnotesize 1:} \> \textbf{procedure} \textsc{PageRank}($G = (V, E, w), \alpha \in (0, 1), v \in \mathbb{R}^n_{+}, \varepsilon > 0$)\\
+{\footnotesize 2:} \> \> $n \gets |V|$\\
+{\footnotesize 3:} \> \> \textbf{for all} $(i, j) \in V \times V$ \textbf{do}\\
+{\footnotesize 4:} \> \> \> \textbf{if} $d^{+}_{w}(j) > 0$ \textbf{then} $M_{ij} \gets w(j, i) / d^{+}_{w}(j)$ \textbf{else} $M_{ij} \gets 0$ \textbf{end if}\\
+{\footnotesize 5:} \> \> \textbf{end for}\\
+{\footnotesize 6:} \> \> $\pi^{(0)} \gets v$ \hspace{3.2cm} $\triangleright$ Inicializa com a distribuição de probabilidade $v$\\
+{\footnotesize 7:} \> \> $k \gets 0$\\
+{\footnotesize 8:} \> \> \textbf{repeat}\\
+{\footnotesize 9:} \> \> \> $k \gets k + 1$\\
+{\footnotesize 10:} \> \> \> $\gamma \gets \sum_{j : d^{+}_{w}(j) = 0} \pi^{(k-1)}_j$ \hspace{0.6cm} $\triangleright$ Massa acumulada nos nós pendentes\\
+{\footnotesize 11:} \> \> \> \textbf{for all} $i \in V$ \textbf{do}\\
+{\footnotesize 12:} \> \> \> \> $\pi^{(k)}_i \gets \alpha \left( \sum_{j \in N^{-}(i)} M_{ij} \pi^{(k-1)}_j + \gamma v_i \right) + (1 - \alpha) v_i$\\
+{\footnotesize 13:} \> \> \> \textbf{end for}\\
+{\footnotesize 14:} \> \> \textbf{until} $\|\pi^{(k)} - \pi^{(k-1)}\|_1 < \varepsilon$\\
+{\footnotesize 15:} \> \> \textbf{return} $\pi^{(k)}$\\
+{\footnotesize 16:} \> \textbf{end procedure}
+\end{tabbing}
+\vspace{-0.35cm}
+\noindent\rule{\linewidth}{0.4pt}
+\vspace{0.1cm}
+
+\subsection{\sffamily O Teorema de Perron-Frobenius e Existência da Solução}
+
+A garantia matemática de que o vetor de PageRank $\pi$ está bem definido, é único e possui todas as componentes estritamente positivas decorre da estrutura espectral de matrizes estocásticas positivas, governada pelo clássico Teorema de Perron-Frobenius \cite{strang2016, langville2006}.
+
+\begin{lema}[Positividade e Estocasticidade da Matriz de Google]
+\label{lema:positividade_google}
+Seja $\widetilde{M} \in \mathbb{R}^{n \times n}$ uma matriz estocástica por colunas ($\widetilde{M}_{ij} \ge 0$ e $\mathbf{1}^{\top}\widetilde{M} = \mathbf{1}^{\top}$), seja $\alpha \in (0, 1)$ e seja $v \in \mathbb{R}^n$ um vetor de probabilidade estritamente positivo ($v_i > 0$ para todo $i$ e $\mathbf{1}^{\top}v = 1$). Então a Matriz de Google $G_{\alpha} = \alpha \widetilde{M} + (1 - \alpha) v \mathbf{1}^{\top}$ é uma matriz estritamente positiva ($G_{\alpha} > 0$) e estocástica por colunas.
+\end{lema}
+
+\begin{proof}
+Para quaisquer índices $i, j \in \{1, \dots, n\}$, como $\widetilde{M}_{ij} \ge 0$, $\alpha \in (0, 1)$ e $v_i > 0$, temos:
+\[
+(G_{\alpha})_{ij} = \alpha \widetilde{M}_{ij} + (1 - \alpha) v_i \ge (1 - \alpha) v_i > 0.
+\]
+Portanto, todas as entradas de $G_{\alpha}$ são estritamente positivas. Além disso, verificando a soma das colunas mediante multiplicação à esquerda por $\mathbf{1}^{\top}$:
+\[
+\mathbf{1}^{\top} G_{\alpha} = \alpha (\mathbf{1}^{\top} \widetilde{M}) + (1 - \alpha) (\mathbf{1}^{\top} v) \mathbf{1}^{\top} = \alpha \mathbf{1}^{\top} + (1 - \alpha)(1) \mathbf{1}^{\top} = \mathbf{1}^{\top},
+\]
+o que demonstra que a soma de cada coluna de $G_{\alpha}$ é idêntica a $1$.
+\end{proof}
+
+\begin{teorema}[Teorema de Perron-Frobenius para Matrizes Positivas Estocásticas]
+\label{teo:perron_frobenius}
+Seja $A \in \mathbb{R}^{n \times n}$ uma matriz estritamente positiva ($A_{ij} > 0, \forall i, j$) e estocástica por colunas ($\mathbf{1}^{\top} A = \mathbf{1}^{\top}$). Então valem as seguintes propriedades espectrais:
+\begin{enumerate}
+    \item O raio espectral de $A$ é $\rho(A) = \max\{|\lambda| : \lambda \in \sigma(A)\} = 1$, e $\lambda_1 = 1$ é um autovalor simples de $A$ (multiplicidade algébrica e geométrica igual a $1$).
+    \item Todo outro autovalor $\lambda \in \sigma(A) \setminus \{1\}$ satisfaz estritamente $|\lambda| < 1$.
+    \item Existe um único autovetor à direita $\pi \in \mathbb{R}^n$ associado a $\lambda_1 = 1$ tal que $\pi_i > 0$ para todo $i \in \{1, \dots, n\}$ e $\|\pi\|_1 = \sum_{i=1}^{n} \pi_i = 1$.
+\end{enumerate}
+\end{teorema}
+
+\begin{proof}
+Primeiramente, como $\mathbf{1}^{\top} A = \mathbf{1}^{\top}$, temos $A^{\top} \mathbf{1} = \mathbf{1}$, logo $\lambda_1 = 1$ é autovalor de $A^{\top}$ e, consequentemente, autovalor de $A$ (pois $\det(A - \lambda I) = \det(A^{\top} - \lambda I)$).
+
+Seja agora $\lambda \in \mathbb{C}$ um autovalor arbitrário de $A$ com autovetor associado $x \in \mathbb{C}^n \setminus \{\mathbf{0}\}$, de modo que $A x = \lambda x$. Tomando o módulo em cada coordenada $i \in \{1, \dots, n\}$ e aplicando a desigualdade triangular:
+\begin{equation}
+|\lambda| |x_i| = |(Ax)_i| = \left| \sum_{j=1}^{n} A_{ij} x_j \right| \le \sum_{j=1}^{n} A_{ij} |x_j|.
+\label{eq:desigualdade_triangular_pf}
+\end{equation}
+Somando a desigualdade (\ref{eq:desigualdade_triangular_pf}) sobre todos os índices $i = 1, \dots, n$ e trocando a ordem das somas finitas:
+\[
+|\lambda| \sum_{i=1}^{n} |x_i| \le \sum_{i=1}^{n} \sum_{j=1}^{n} A_{ij} |x_j| = \sum_{j=1}^{n} \left( \sum_{i=1}^{n} A_{ij} \right) |x_j| = \sum_{j=1}^{n} 1 \cdot |x_j| = \|x\|_1.
+\]
+Como $x \neq \mathbf{0}$, temos $\|x\|_1 > 0$, de onde segue imediatamente que $|\lambda| \le 1$, provando que $\rho(A) = 1$.
+
+Suponha agora que $|\lambda| = 1$. Então a desigualdade acima deve ser uma igualdade em cada coordenada $i$:
+\[
+|x_i| = \left| \sum_{j=1}^{n} A_{ij} x_j \right| = \sum_{j=1}^{n} A_{ij} |x_j|, \qquad \forall i \in \{1, \dots, n\}.
+\]
+Isso implica que o vetor módulo $|x| = (|x_1|, \dots, |x_n|)^{\top}$ satisfaz $A |x| = |x|$. Como $A_{ij} > 0$ para todo par $(i, j)$ e $|x| \neq \mathbf{0}$ possui ao menos uma coordenada positiva $|x_{j_0}| > 0$, temos $|x_i| = \sum_{j=1}^{n} A_{ij} |x_j| \ge A_{ij_0} |x_{j_0}| > 0$ para todo $i$. Logo, todas as coordenadas de $|x|$ são estritamente positivas. Além disso, a igualdade na desigualdade triangular complexa $|\sum_{j=1}^n A_{ij} x_j| = \sum_{j=1}^n A_{ij} |x_j|$ com coeficientes $A_{ij} > 0$ só ocorre se todos os números complexos não nulos $x_1, x_2, \dots, x_n$ possuírem o mesmo argumento complexo, isto é, existir $\theta \in [0, 2\pi)$ tal que $x = e^{i\theta} |x|$. Substituindo em $Ax = \lambda x$, obtemos:
+\[
+\lambda e^{i\theta} |x| = \lambda x = A x = e^{i\theta} A |x| = e^{i\theta} |x| \implies \lambda = 1.
+\]
+Portanto, nenhum autovalor $\lambda \neq 1$ pode ter módulo $1$, garantindo $|\lambda| < 1$ para todo $\lambda \in \sigma(A) \setminus \{1\}$.
+
+Para provar a unicidade na direção do autovetor associado a $\lambda_1 = 1$, suponha que exista outro autovetor real linearmente independente $y \in \mathbb{R}^n$ tal que $A y = y$. Pela mesma derivação, $|y|$ satisfaz $A|y| = |y|$. Escolhendo $c \in \mathbb{R}$ tal que $z = |x| - c|y|$ possua ao menos uma coordenada nula e todas as demais não negativas ($z \ge 0$, $z \neq \mathbf{0}$), teríamos $Az = z$. Contudo, como $A > 0$ e $z \neq \mathbf{0}$, toda coordenada de $Az$ deve ser estritamente positiva, contradizendo a existência de uma coordenada nula em $z$. Assim, o autoespaço associado a $\lambda_1 = 1$ tem dimensão $1$, e normalizando $|x|$ por $\|x\|_1$, obtemos o único autovetor estacionário positivo $\pi = |x|/\|x\|_1$.
+\end{proof}
+
+\subsection{\sffamily Prova de Validade e Convergência Global do PageRank}
+
+Inspirando-nos no rigor formal com que se demonstram a corretude e a otimalidade dos algoritmos clássicos em grafos, demonstraremos agora que o Algoritmo 1 converge globalmente a partir de qualquer distribuição inicial $\pi^{(0)}$ e que sua taxa de convergência é geométrica e controlada diretamente pelo fator de amortecimento $\alpha$, independentemente da dimensão $n$ ou da topologia de passes do grafo $G$.
+
+\begin{teorema}[Contração Estrita na Norma $\ell_1$ e Taxa de Convergência]
+\label{teo:convergencia_pagerank}
+Seja $G_{\alpha} = \alpha \widetilde{M} + (1 - \alpha) v \mathbf{1}^{\top}$ a Matriz de Google com $\alpha \in (0, 1)$, e seja $\pi$ sua única distribuição estacionária ($G_{\alpha}\pi = \pi$). Para qualquer vetor de probabilidade inicial $\pi^{(0)} \in \mathbb{R}^n_{+}$, a sequência iterativa $\pi^{(k)} = G_{\alpha}\pi^{(k-1)}$ gerada pelo Algoritmo 1 satisfaz, para todo $k \ge 1$:
+\begin{equation}
+\|\pi^{(k)} - \pi\|_1 \le \alpha^k \|\pi^{(0)} - \pi\|_1 \le 2 \alpha^k.
+\label{eq:cota_convergencia}
+\end{equation}
+Em particular, $\lim_{k \to \infty} \pi^{(k)} = \pi$ exponencialmente rápido.
+\end{teorema}
+
+\begin{proof}
+Sejam $x, y \in \mathbb{R}^n$ dois vetores de probabilidade arbitrários, isto é, $x_i, y_i \ge 0$ e $\mathbf{1}^{\top} x = \mathbf{1}^{\top} y = 1$. Calculemos a imagem da diferença $x - y$ sob a aplicação de $G_{\alpha}$:
+\[
+G_{\alpha} x - G_{\alpha} y = \alpha \widetilde{M}(x - y) + (1 - \alpha) v \mathbf{1}^{\top}(x - y).
+\]
+Como $\mathbf{1}^{\top}(x - y) = \mathbf{1}^{\top} x - \mathbf{1}^{\top} y = 1 - 1 = 0$, o segundo termo anula-se identicamente, restando:
+\[
+G_{\alpha} x - G_{\alpha} y = \alpha \widetilde{M}(x - y).
+\]
+Tomando a norma $\ell_1$ ($\|z\|_1 = \sum_{i=1}^{n} |z_i|$) em ambos os membros e utilizando a estocasticidade por colunas de $\widetilde{M}$ ($\sum_{i=1}^{n} \widetilde{M}_{ij} = 1$ para todo $j$):
+\begin{align*}
+\|G_{\alpha} x - G_{\alpha} y\|_1 &= \alpha \|\widetilde{M}(x - y)\|_1 = \alpha \sum_{i=1}^{n} \left| \sum_{j=1}^{n} \widetilde{M}_{ij} (x_j - y_j) \right| \\
+&\le \alpha \sum_{i=1}^{n} \sum_{j=1}^{n} \widetilde{M}_{ij} |x_j - y_j| = \alpha \sum_{j=1}^{n} \left( \sum_{i=1}^{n} \widetilde{M}_{ij} \right) |x_j - y_j| \\
+&= \alpha \sum_{j=1}^{n} |x_j - y_j| = \alpha \|x - y\|_1.
+\end{align*}
+Isso demonstra que $G_{\alpha}$ atua como uma \textbf{contração estrita} com constante de Lipschitz $\alpha < 1$ sobre o simplexo de probabilidade $\Delta^{n-1} = \{x \in \mathbb{R}^n_{+} : \|x\|_1 = 1\}$ munido da métrica induzida pela norma $\ell_1$.
+
+Aplicando agora indução matemática sobre o índice de iteração $k \ge 1$ com $x = \pi^{(k-1)}$ e $y = \pi$ (lembrando que $G_{\alpha}\pi = \pi$):
+\begin{itemize}
+    \item \textbf{Caso base ($k = 1$):} $\|\pi^{(1)} - \pi\|_1 = \|G_{\alpha}\pi^{(0)} - G_{\alpha}\pi\|_1 \le \alpha \|\pi^{(0)} - \pi\|_1$.
+    \item \textbf{Passo indutivo:} Supondo a validade para $k - 1$, temos na $k$-ésima iteração:
+    \[
+    \|\pi^{(k)} - \pi\|_1 = \|G_{\alpha}\pi^{(k-1)} - G_{\alpha}\pi\|_1 \le \alpha \|\pi^{(k-1)} - \pi\|_1 \le \alpha \cdot \alpha^{k-1} \|\pi^{(0)} - \pi\|_1 = \alpha^k \|\pi^{(0)} - \pi\|_1.
+    \]
+\end{itemize}
+Finalmente, como $\|\pi^{(0)} - \pi\|_1 \le \|\pi^{(0)}\|_1 + \|\pi\|_1 = 1 + 1 = 2$, obtemos $\|\pi^{(k)} - \pi\|_1 \le 2\alpha^k$. Como $0 < \alpha < 1$, tem-se $\lim_{k \to \infty} 2\alpha^k = 0$, concluindo a demonstração.
+\end{proof}
+
+\begin{corolario}[Complexidade de Iterações para Tolerância $\varepsilon$]
+Para garantir um erro em norma $\ell_1$ estritamente inferior a uma tolerância numérica $\varepsilon > 0$ ($\|\pi^{(k)} - \pi\|_1 < \varepsilon$), basta executar no máximo
+\[
+k \ge \left\lceil \frac{\ln(\varepsilon / 2)}{\ln(\alpha)} \right\rceil
+\]
+iterações do método das potências. Em nossa implementação (\texttt{tol = 1e-8}) e com $\alpha \approx 0{,}80$ típico de redes de passes no futebol, o algoritmo converge com precisão de máquina em cerca de $k \approx 86$ iterações.
+\end{corolario}
+
+%Seção 3
+\section{\sffamily Modelagem do Fluxo de Jogo com Grafos}
+
+\subsection{\sffamily Representação da Rede de Passes e Recorte Temporal}
+
+Para aplicar o arcabouço teórico da Seção 2 a uma partida de futebol real, modelamos uma equipe específica como um digrafo ponderado $G = (V, E, w)$. No entan0to, diferentemente de redes estáticas, uma partida de futebol sofre alterações estruturais discretas sempre que ocorrem substituições ou expulsões: quando um atleta deixa o gramado aos $60$ minutos para a entrada de um reserva, um vértice antigo cessa permanentemente de receber e emitir arestas, enquanto um novo vértice passa a interagir apenas durante um subintervalo reduzido do tempo regulamentar.
+
+Caso construíssemos o grafo agregando os $90$ minutos indiscriminadamente com todos os $14$ a $16$ atletas utilizados na partida, incorreríamos em um grave viés de exposição temporal: jogadores titulares teriam graus ponderados artificialmente inflados em relação aos substitutos, e a matriz de transição misturaria estados que jamais coexistiram simultaneamente em campo. Para eliminar esse fator de confusão e garantir a invariância topológica da rede ($\forall t \in [0, T_{\text{sub}}], |V| = 11$), instituímos a regra de \textbf{isolamento temporal até a primeira substituição}:
+\[
+\mathcal{E}_{\text{titulares}} := \{ e_{\text{ev}} \in \mathcal{E}_{\text{time}} : \text{index}(e_{\text{ev}}) < \min_{s \in \mathcal{S}_{\text{time}}} \text{index}(s) \},
+\]
+onde $\mathcal{E}_{\text{time}}$ é o conjunto ordenado de todos os eventos da equipe na partida e $\mathcal{S}_{\text{time}}$ é o subconjunto de eventos do tipo \texttt{Substitution}. Desse modo, $V = \{v_1, v_2, \dots, v_{11}\}$ representa exatamente os $11$ titulares da equipe atuando sob uma mesma configuração tática estacionária.
+
+\subsection{\sffamily Estimação Empírica Endógena do Fator de Amortecimento (\texorpdfstring{$\alpha$}{alpha})}
+
+Na literatura de redes da Web, adota-se convencionalmente $\alpha = 0{,}85$ de forma arbitrária \cite{brin1998}. Em nossa modelagem estocástica do futebol, propomos uma inovação metodológica: o fator de amortecimento $\alpha$ possui uma interpretação física exata como a \textbf{probabilidade condicional empírica de a posse de bola continuar ativa por mais um passe} dentro da rede da equipe, enquanto $1 - \alpha$ representa a probabilidade de a sequência de passes ser interrompida (seja por uma finalização a gol, um passe interceptado/incompleto ou uma perda de posse por desarme ou domínio errado).
+
+Sejam $N_{\text{cont}}$ o número total de passes completos executados pelos titulares no recorte ($\text{type} = \text{Pass}$ e $\text{pass\_outcome} = \text{NaN}$) e $N_{\text{enc}}$ a soma dos eventos que encerram a cadeia de circulação daquela posse: passes incompletos ($N_{\text{inc}}$), finalizações a gol ($N_{\text{chutes}}$, $\text{type} = \text{Shot}$) e perdas diretas de posse ($N_{\text{perdas}}$, $\text{type} \in \{\text{Dispossessed}, \text{Miscontrol}\}$). Definimos o estimador de máxima verossimilhança do fator de amortecimento empírico da partida como:
+\begin{equation}
+\hat{\alpha} := \frac{N_{\text{cont}}}{N_{\text{cont}} + N_{\text{enc}}} = \frac{N_{\text{cont}}}{N_{\text{cont}} + N_{\text{inc}} + N_{\text{chutes}} + N_{\text{perdas}}} \in (0, 1).
+\label{eq:alpha_empirico}
+\end{equation}
+Assim, equipes com alta capacidade de retenção e controle de posse operam com $\hat{\alpha}$ mais elevado (cadeias de Markov mais longas), enquanto jogos de transição vertical rápida e maior atrito defensivo refletem-se naturalmente em um $\hat{\alpha}$ menor.
+
+\subsection{\sffamily Engenharia de Atributos e Ponderação de Arestas (\texorpdfstring{$w_{ij}$}{w\_ij})}
+
+No sistema de coordenadas padronizado da StatsBomb, o gramado é mapeado no retângulo cartesiano $[0, 120] \times [0, 80]$ (em jardas), onde a equipe analisada ataca sempre da esquerda para a direita e o centro da baliza adversária situa-se na coordenada fixa $G_{\text{gol}} = (120, 40)$. Seja $p$ um passe individual completo executado pelo jogador $u \in V$ e recebido pelo companheiro $v \in V$, com coordenada inicial $(x_0, y_0) \in [0, 120] \times [0, 80]$ e coordenada final $(x_1, y_1) \in [0, 120] \times [0, 80]$. Para que a matriz de transição $M$ preserve a não negatividade exigida pela teoria de Cadeias de Markov e pelo Teorema \ref{teo:perron_frobenius}, todo passe individual deve receber uma valoração estritamente positiva $\omega(p) > 0$, de modo que o peso agregado da aresta direcionada $(u, v) \in E$ seja a soma sobre todos os passes completos $\mathcal{P}_{uv}$ de $u$ para $v$:
+\begin{equation}
+w(u, v) = \sum_{p \in \mathcal{P}_{uv}} \omega(p).
+\label{eq:soma_arestas}
+\end{equation}
+Desenvolvemos e comparamos quatro formulações matemáticas para o funcional de peso $\omega(p)$:
+
+\subsubsection*{\sffamily 1. Ponderação por Volume Bruto (\texorpdfstring{$\omega_{\text{cont}}$}{w\_cont})}
+O modelo de linha de base atribui peso unitário $\omega_{\text{cont}}(p) = 1$ a cada passe concluído, de modo que $w(u, v) = |\mathcal{P}_{uv}|$ contabiliza a frequência absoluta de interação entre $u$ e $v$.
+
+\subsubsection*{\sffamily 2. Ponderação Tática Composta (\texorpdfstring{$\omega_{\text{tatico}}$}{w\_tatico})}
+Passes laterais na defesa não possuem o mesmo valor tático que passes verticais que rompem linhas sob pressão ou colocam um companheiro em condição de finalizar. Definimos primeiramente o avanço longitudinal linear $\Delta X(p) = x_1 - x_0$ e o avanço longitudinal truncado $\Delta X_{+}(p) = \max(0, x_1 - x_0)$. Para capturar com exatidão a convergência geométrica em direção à baliza (incluindo diagonais agudas da ala para a grande área), calculamos a redução da distância euclidiana até o centro do gol adversário $(120, 40)$:
+\begin{equation}
+\Delta D_{\text{gol}}(p) := \max\left(0, \; \sqrt{(120 - x_0)^2 + (40 - y_0)^2} - \sqrt{(120 - x_1)^2 + (40 - y_1)^2}\right).
+\label{eq:ganho_proximidade}
+\end{equation}
+Definindo as variáveis indicadoras binárias $\mathbb{I}_{\text{press}}(p) \in \{0, 1\}$ (igual a $1$ se o passe foi executado sob pressão física direta de um marcador adversário, atributo \texttt{under\_pressure}) e $\mathbb{I}_{\text{chute}}(p) \in \{0, 1\}$ (igual a $1$ se o passe resultou diretamente em uma finalização, atributo \texttt{pass\_shot\_assist}), formulamos o peso tático composto de cada passe $p$ como:
+\begin{equation}
+\omega_{\text{tatico}}(p) := \left( 1{,}0 + \frac{\Delta D_{\text{gol}}(p)}{10{,}0} + 5{,}0 \cdot \mathbb{I}_{\text{chute}}(p) \right) \times \left( 1{,}0 + 0{,}5 \cdot \mathbb{I}_{\text{press}}(p) \right).
+\label{eq:peso_tatico}
+\end{equation}
+Note a coerência algébrica da Equação (\ref{eq:peso_tatico}): todo passe completo parte de um piso base de $1{,}0$ (garantindo $\omega_{\text{tatico}}(p) \ge 1{,}0 > 0$ mesmo para passes de recuo em que $\Delta D_{\text{gol}}(p) = 0$), recebe $0{,}1$ ponto adicional para cada jarda de aproximação radial ao gol, soma um bônus aditivo substancial de $+5{,}0$ caso gere uma finalização imediata (passe-chave), e tem todo o seu valor multiplicado por um fator de $1{,}5\times$ quando executado sob pressão adversária.
+
+\subsubsection*{\sffamily 3. Ponderação por \textit{Expected Threat} (\texorpdfstring{$\omega_{\text{xT}}$}{w\_xT})}
+Para incorporar o valor posicional esperado de cada zona do gramado, integramos o modelo estocástico de \textbf{Expected Threat ($xT$)} proposto por Karun Singh \cite{singh2018}. O campo de dimensões $120 \times 80$ é particionado em uma grade matricial discreta de $8$ linhas (eixo transversal $y$, com largura $\Delta y = 10$ jardas por célula) por $12$ colunas (eixo longitudinal $x$, com comprimento $\Delta x = 10$ jardas por célula). Cada célula $(r, c) \in \{0, \dots, 7\} \times \{0, \dots, 11\}$ da matriz $\mathbf{XT} \in \mathbb{R}^{8 \times 12}_{+}$ armazena a probabilidade empírica de que uma posse de bola naquela zona resulte em gol dentro das próximas ações. Mapeando qualquer coordenada contínua $(x, y)$ nos índices discretos da grade por meio de truncamento com saturação de borda (\textit{clipping}):
+\[
+r(y) = \min\left(7, \max\left(0, \left\lfloor \frac{8 y}{80} \right\rfloor\right)\right), \qquad c(x) = \min\left(11, \max\left(0, \left\lfloor \frac{12 x}{120} \right\rfloor\right)\right),
+\]
+o ganho territorial de ameaça gerado pelo passe $p$ é $\Delta xT(p) = \mathbf{XT}_{r(y_1), c(x_1)} - \mathbf{XT}_{r(y_0), c(x_0)}$. Para evitar pesos negativos em passes de recuo (que violariam a estrutura markoviana) e preservar a conectividade de passes de manutenção de posse, definimos:
+\begin{equation}
+\omega_{\text{xT}}(p) := c_{\text{base}}^{\text{xT}} + \max\left(0, \; \mathbf{XT}_{r(y_1), c(x_1)} - \mathbf{XT}_{r(y_0), c(x_0)}\right), \quad \text{com } c_{\text{base}}^{\text{xT}} = 0{,}01.
+\label{eq:peso_xt}
+\end{equation}
+
+\subsubsection*{\sffamily 4. Ponderação por \textit{Expected Goals} da Posse e Assistência (\texorpdfstring{$\omega_{\text{xG}}$}{w\_xG})}
+Por fim, conectamos o fluxo de passes diretamente à qualidade probabilística das finalizações geradas (\textit{StatsBomb Expected Goals}, $xG$). Seja $s(p)$ o identificador do chute diretamente assistido pelo passe $p$ (quando existente), cujo valor de $xG$ denotamos por $xA_{\text{dir}}(p) = xG(s(p))$ (e $0$ caso o passe não seja uma assistência direta para chute). Além disso, seja $\text{pos}(p)$ o identificador único da sequência de posse de bola à qual pertence o passe $p$, e definamos o \textbf{xG da Posse} (\textit{xGChain}) como a soma do $xG$ de todas as finalizações ocorridas naquela posse:
+\[
+xG_{\text{posse}}(p) := \sum_{s \in \text{Chutes}(\text{pos}(p))} xG(s).
+\]
+Combinando um piso base $c_{\text{base}}^{\text{xG}} = 0{,}05$, a assistência direta $xA_{\text{dir}}(p)$ com peso integral e a participação na construção da posse ponderada por $\beta_{\text{posse}} = 0{,}50$, definimos:
+\begin{equation}
+\omega_{\text{xG}}(p) := 0{,}05 + xA_{\text{dir}}(p) + 0{,}50 \cdot xG_{\text{posse}}(p).
+\label{eq:peso_xg}
+\end{equation}
+
+%Implementaçãoe Ferramentas
+\section{\sffamily Implementação e Ferramentas}
+
+\subsection{\sffamily Fonte de Dados}
+
+Para validar empiricamente a modelagem matemática desenvolvida nas seções precedentes, utilizamos o repositório aberto da \textbf{StatsBomb} (\textit{StatsBomb Open Data}), acessado programaticamente em linguagem Python por meio da biblioteca oficial \texttt{statsbombpy}. A escolha dessa fonte justifica-se pelo fato de a StatsBomb prover o padrão de referência em dados de eventos no futebol mundial, registrando mais de $3.400$ eventos espaço-temporais por partida com coordenadas de alta precisão, indicadores explícitos de pressão defensiva (\texttt{under\_pressure}), identificadores de cadeia de posse (\texttt{possession}) e modelos proprietários de \textit{Expected Goals} (\texttt{shot\_statsbomb\_xg}) que incorporam o posicionamento tridimensional do goleiro e dos defensores no instante do chute.
+
+Nosso estudo empírico concentra-se na campanha vitoriosa da \textbf{Seleção Argentina} na fase eliminatória decisiva da Copa do Mundo FIFA de 2022 no Catar, analisando especificamente três confrontos de altíssima exigência tática: Quartas de Final contra a Holanda (\texttt{match\_id = 3869321}), Semifinal contra a Croácia (\texttt{match\_id = 3869519}) e a Grande Final contra a França (\texttt{match\_id = 3869685}).
+
+\subsection{\sffamily Código Python}
+
+A arquitetura computacional foi implementada em Python utilizando as bibliotecas \texttt{pandas} e \texttt{numpy} para processamento vetorial de matrizes e \textit{DataFrames}, e \texttt{networkx} para a construção das estruturas de digrafos e execução numérica do PageRank. Apresentamos a seguir os blocos fundamentais do código-fonte desenvolvido no projeto, explicando detalhadamente a lógica algorítmica de cada função.
+
+Inicialmente, definimos a matriz oficial $8 \times 12$ de \textit{Expected Threat} de Karun Singh \cite{singh2018} e a função vetorizada \texttt{obter\_xt}, que converte vetores de coordenadas $(x, y)$ do padrão StatsBomb ($120 \times 80$) para os índices discretos correspondentes da grade:
+
+\begin{lstlisting}[caption={Implementação da grade $8 \times 12$ de Expected Threat (xT) e mapeamento espacial.}]
+import numpy as np
+import pandas as pd
+import networkx as nx
+from statsbombpy import sb
+
+# Matriz oficial 8x12 de Expected Threat (Karun Singh)
+XT_GRID = np.array([
+    [0.00638303, 0.00779616, 0.00844854, 0.00977659, 0.01126267, 0.01248344,
+     0.01473596, 0.01745060, 0.02122129, 0.02756312, 0.03485072, 0.03792590],
+    [0.00750072, 0.00878589, 0.00942382, 0.01059490, 0.01214719, 0.01384540,
+     0.01611813, 0.01870347, 0.02401521, 0.02953272, 0.04066992, 0.04647721],
+    [0.00887990, 0.00977745, 0.01001304, 0.01110462, 0.01269174, 0.01429128,
+     0.01685596, 0.01935132, 0.02412240, 0.02855202, 0.05491138, 0.06442595],
+    [0.00941056, 0.01082722, 0.01016549, 0.01132376, 0.01262646, 0.01484598,
+     0.01689528, 0.01997070, 0.02385149, 0.03511326, 0.10805102, 0.25745362],
+    [0.00941056, 0.01082722, 0.01016549, 0.01132376, 0.01262646, 0.01484598,
+     0.01689528, 0.01997070, 0.02385149, 0.03511326, 0.10805102, 0.25745362],
+    [0.00887990, 0.00977745, 0.01001304, 0.01110462, 0.01269174, 0.01429128,
+     0.01685596, 0.01935132, 0.02412240, 0.02855202, 0.05491138, 0.06442595],
+    [0.00750072, 0.00878589, 0.00942382, 0.01059490, 0.01214719, 0.01384540,
+     0.01611813, 0.01870347, 0.02401521, 0.02953272, 0.04066992, 0.04647721],
+    [0.00638303, 0.00779616, 0.00844854, 0.00977659, 0.01126267, 0.01248344,
+     0.01473596, 0.01745060, 0.02122129, 0.02756312, 0.03485072, 0.03792590]
+])
+
+def obter_xt(x, y):
+    """Converte coordenadas StatsBomb (0..120, 0..80) nos índices da grade 8x12."""
+    col = np.clip((x / 120.0 * 12).astype(int), 0, 11)
+    lin = np.clip((y / 80.0 * 8).astype(int), 0, 7)
+    return XT_GRID[lin, col]
+\end{lstlisting}
+
+Observe que a matriz \texttt{XT\_GRID} apresenta simetria perfeita no eixo transversal $y$ (as linhas $0$ a $3$ espelham as linhas $7$ a $4$) e crescimento monotônico acentuado ao longo das colunas de $0$ a $11$, atingindo o pico de $0{,}25745362$ nas duas células centrais da pequena área adversária ($\text{lin} \in \{3, 4\}, \text{col} = 11$).
+
+A seguir, apresentamos as funções responsáveis pelo isolamento temporal dos eventos dos titulares e pela estimação empírica do parâmetro de Markov $\alpha$ conforme a Equação (\ref{eq:alpha_empirico}), seguidas pela função nuclear de engenharia de atributos \texttt{obter\_df\_passes}:
+
+\begin{lstlisting}[caption={Isolamento até a primeira substituição, cálculo de $\alpha$ e engenharia de atributos em \texttt{obter\_df\_passes}.}]
+def obter_eventos_titulares(match_id, time_alvo):
+    eventos = sb.events(match_id=match_id)
+    eventos_time = eventos[eventos['team'] == time_alvo].sort_values(
+        by=['period', 'minute', 'second', 'index']
+    ).copy()
+    subs = eventos_time[eventos_time['type'] == 'Substitution']
+    if not subs.empty:
+        primeira_sub_idx = subs.iloc[0]['index']
+        return eventos_time[eventos_time['index'] < primeira_sub_idx].copy()
+    return eventos_time.copy()
+
+def estimar_alpha_empirico(eventos_titulares):
+    passes_completos = eventos_titulares[
+        (eventos_titulares['type'] == 'Pass') & (eventos_titulares['pass_outcome'].isna())
+    ]
+    passes_errados = eventos_titulares[
+        (eventos_titulares['type'] == 'Pass') & (eventos_titulares['pass_outcome'].notna())
+    ]
+    chutes = eventos_titulares[eventos_titulares['type'] == 'Shot']
+    perdas = eventos_titulares[eventos_titulares['type'].isin(['Dispossessed', 'Miscontrol'])]
+    n_cont = len(passes_completos)
+    n_enc = len(passes_errados) + len(chutes) + len(perdas)
+    return n_cont / (n_cont + n_enc)
+
+def obter_df_passes(MATCH_ID, TIME_ALVO):
+    eventos_titulares = obter_eventos_titulares(MATCH_ID, TIME_ALVO)
+    passes = eventos_titulares[
+        (eventos_titulares['type'] == 'Pass') & (eventos_titulares['pass_outcome'].isna())
+    ].dropna(subset=['player', 'pass_recipient', 'location', 'pass_end_location']).copy()
+
+    passes[['x_inicio', 'y_inicio']] = pd.DataFrame(passes['location'].tolist(), index=passes.index)
+    passes[['x_fim', 'y_fim']] = pd.DataFrame(passes['pass_end_location'].tolist(), index=passes.index)
+
+    # Engenharia de Atributos para os Pesos das Arestas (w_ij)
+    passes['delta_x'] = passes['x_fim'] - passes['x_inicio']
+    passes['avanco_positivo'] = passes['delta_x'].clip(lower=0)
+    dist_inicio = np.hypot(120 - passes['x_inicio'], 40 - passes['y_inicio'])
+    dist_fim = np.hypot(120 - passes['x_fim'], 40 - passes['y_fim'])
+    passes['ganho_proximidade_gol'] = (dist_inicio - dist_fim).clip(lower=0)
+
+    passes['sob_pressao'] = passes['under_pressure'].fillna(False).astype(int)
+    passes['passe_para_chute'] = passes['pass_shot_assist'].fillna(False).astype(int)
+    passes['peso_tatico'] = (
+        1.0 + (passes['ganho_proximidade_gol'] / 10.0) + (passes['passe_para_chute'] * 5.0)
+    ) * np.where(passes['sob_pressao'] == 1, 1.5, 1.0)
+
+    # Integração de Expected Threat (xT) e Expected Goals (xG / xA)
+    passes['delta_xt'] = obter_xt(passes['x_fim'], passes['y_fim']) - obter_xt(passes['x_inicio'], passes['y_inicio'])
+    passes['peso_xt'] = 0.01 + passes['delta_xt'].clip(lower=0)
+
+    chutes = eventos_titulares[eventos_titulares['type'] == 'Shot'][['id', 'possession', 'shot_statsbomb_xg']].fillna(0.0)
+    mapa_xa = chutes.set_index('id')['shot_statsbomb_xg'].to_dict()
+    passes['xa_direto'] = passes['pass_assisted_shot_id'].map(mapa_xa).fillna(0.0) if 'pass_assisted_shot_id' in passes.columns else 0.0
+    xg_por_posse = chutes.groupby('possession')['shot_statsbomb_xg'].sum().to_dict()
+    passes['xg_posse'] = passes['possession'].map(xg_por_posse).fillna(0.0)
+    passes['peso_xg'] = 0.05 + passes['xa_direto'] + (0.50 * passes['xg_posse'])
+
+    colunas = ['minute', 'second', 'player', 'pass_recipient', 'x_inicio', 'y_inicio', 'x_fim', 'y_fim',
+               'delta_x', 'avanco_positivo', 'ganho_proximidade_gol', 'sob_pressao', 'passe_para_chute',
+               'peso_tatico', 'peso_xt', 'peso_xg']
+    return passes[colunas].reset_index(drop=True)
+\end{lstlisting}
+
+Na função \texttt{obter\_df\_passes}, o fluxo de dados passa por quatro estágios rigorosos: (1) ordenação cronológica estrita por período, minuto, segundo e índice de evento, truncando o \textit{DataFrame} exatamente no índice anterior à primeira substituição; (2) filtragem exclusiva dos passes concluídos (\texttt{pass\_outcome.isna()}) e desempacotamento vetorial das listas de coordenadas bidimensionais \texttt{location} e \texttt{pass\_end\_location}; (3) cômputo vetorial da distância euclidiana via \texttt{np.hypot} para obter $\Delta D_{\text{gol}}$ e síntese da variável \texttt{peso\_tatico}; e (4) cruzamento relacional entre o identificador de assistência do passe (\texttt{pass\_assisted\_shot\_id}) e o dicionário de chutes para extrair o $xA$ direto, somado ao agrupamento por \texttt{possession} para mensurar o \textit{xGChain} (\texttt{xg\_posse}).
+
+Uma vez estruturado o conjunto de arestas enriquecidas, as funções \texttt{calcular\_pagerank\_futebol} e \texttt{analisar\_varias\_partidas\_selecao} constroem o digrafo no \texttt{NetworkX}, validam a ausência de pesos negativos, executam o algoritmo PageRank com tolerância de convergência $\varepsilon = 10^{-8}$ e consolidam as médias ao longo de múltiplos jogos:
+
+\begin{lstlisting}[caption={Construção do digrafo no NetworkX, execução do PageRank e agregação multi-partida.}]
+def calcular_pagerank_futebol(MATCH_ID, TIME_ALVO, coluna_peso=None, vetor_personalizacao=None):
+    df_passes = obter_df_passes(MATCH_ID, TIME_ALVO)
+    alpha = estimar_alpha_empirico(obter_eventos_titulares(MATCH_ID, TIME_ALVO))
+    if coluna_peso is None:
+        arestas = df_passes.groupby(['player', 'pass_recipient']).size().reset_index(name='peso_final')
+    else:
+        if (df_passes[coluna_peso] < 0).any():
+            raise ValueError(f"A coluna '{coluna_peso}' contém valores negativos, violando a Cadeia de Markov.")
+        arestas = df_passes.groupby(['player', 'pass_recipient'])[coluna_peso].sum().reset_index(name='peso_final')
+
+    G = nx.DiGraph()
+    for _, row in arestas.iterrows():
+        G.add_edge(row['player'], row['pass_recipient'], weight=row['peso_final'])
+
+    scores = nx.pagerank(G, alpha=alpha, weight='weight', personalization=vetor_personalizacao, tol=1e-08)
+    ranking = pd.DataFrame(list(scores.items()), columns=['Jogador', f'PageRank_{coluna_peso or "contagem"}'])
+    return ranking.sort_values(by=ranking.columns[1], ascending=False).reset_index(drop=True)
+
+def analisar_varias_partidas_selecao(lista_match_ids, time_alvo, coluna_peso=None):
+    todos_rankings = []
+    nome_coluna_pr = f'PageRank_{coluna_peso or "contagem"}'
+    for match_id in lista_match_ids:
+        ranking_jogo = calcular_pagerank_futebol(MATCH_ID=match_id, TIME_ALVO=time_alvo, coluna_peso=coluna_peso)
+        ranking_jogo['match_id'] = match_id
+        todos_rankings.append(ranking_jogo)
+
+    df_consolidado = pd.concat(todos_rankings, ignore_index=True)
+    df_media = df_consolidado.groupby('Jogador', as_index=False).agg(
+        Jogos_Titular=('match_id', 'count'), Media_PageRank=(nome_coluna_pr, 'mean')
+    )
+    return df_media.sort_values(by='Media_PageRank', ascending=False).reset_index(drop=True)
+\end{lstlisting}
+
+\subsection{\sffamily Visualizações e Análise Gráfica Espaço-Temporal}
+
+Para traduzir as propriedades topológicas e espectrais extraídas pelo código em representações visuais de padrão acadêmico, implementamos o módulo de visualização com \texttt{mplsoccer} e \texttt{matplotlib}, gerando as Figuras \ref{fig:rede_passes}, \ref{fig:barras_pagerank} e \ref{fig:heatmap_xt} diretamente a partir dos dados processados:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.74\linewidth]{fig_rede_passes.pdf}
+    \vspace{-0.15cm}
+    \caption{\textbf{Grafo Direcionado e Ponderado da Rede de Passes da Seleção Argentina.} Cada nó $v \in V$ é posicionado nas coordenadas médias $(\bar{x}_v, \bar{y}_v)$ de início dos passes (\texttt{x\_inicio}, \texttt{y\_inicio}) até a primeira substituição. A área de cada vértice é proporcional à sua centralidade de PageRank ($\pi_v$), e a espessura/opacidade das arestas direcionadas reflete o peso tático acumulado $w(u, v)$, destacando o triângulo central Otamendi--Enzo Fernández--De Paul.}
+    \label{fig:rede_passes}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.74\linewidth]{fig_ranking_pagerank.pdf}
+    \vspace{-0.15cm}
+    \caption{\textbf{Distribuição de Centralidade PageRank dos Titulares da Argentina.} Gráfico de barras horizontais ordenando os $14$ jogadores titulares utilizados nas partidas eliminatórias (\texttt{3869321}, \texttt{3869519} e \texttt{3869685}) segundo a média de PageRank ($\bar{\pi}_i$). A linha vertical tracejada indica a centralidade uniforme de referência ($1/11 \approx 0{,}0909$), destacando o bloco de articuladores acima do limiar uniforme.}
+    \label{fig:barras_pagerank}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.74\linewidth]{fig_heatmap_xt.pdf}
+    \vspace{-0.15cm}
+    \caption{\textbf{Superfície Espacial de Expected Threat ($xT$) sobre o Gramado StatsBomb ($120 \times 80$).} Mapa de calor da matriz discreta $8 \times 12$ de Karun Singh sobreposta às marcações do campo e aos vetores dos passes de maior incremento $\Delta xT > 0$. O gradiente cromático (\texttt{magma}) evidencia a progressão não linear de valor desde a defesa ($xT \approx 0{,}006$) até a pequena área adversária ($xT = 0{,}257$).}
+    \label{fig:heatmap_xt}
+\end{figure}
+
+\subsection{\sffamily Executando o Programa e Coleta dos Dados}
+
+A execução da rotina \texttt{analisar\_varias\_partidas\_selecao([3869321, 3869519, 3869685], "Argentina")} processa sequencialmente as três partidas eliminatórias da Seleção Argentina na Copa do Mundo de 2022, produzindo no terminal o registro de auditoria do recorte temporal e da densidade de cada grafo:
+
+\begin{lstlisting}[caption={Saída de execução do programa para as partidas eliminatórias da Argentina na Copa 2022.}]
+--- Processando partida 3869321 (Argentina vs. Holanda - Quartas de Final) ---
+Recorte aplicado até a 1ª substituição aos 65 min. | Passes válidos: 295 | Titulares: 11
+--- Processando partida 3869519 (Argentina vs. Croácia - Semifinal) ---
+Recorte aplicado até a 1ª substituição aos 61 min. | Passes válidos: 243 | Titulares: 11
+--- Processando partida 3869685 (Argentina vs. França - Final) ---
+Recorte aplicado até a 1ª substituição aos 63 min. | Passes válidos: 317 | Titulares: 11
+\end{lstlisting}
+
+Observa-se uma notável consistência temporal nas decisões da comissão técnica liderada por Lionel Scaloni: nas três partidas decisivas, a formação titular permaneceu inalterada por mais de uma hora de jogo ($65$, $61$ e $63$ minutos, respectivamente), totalizando $855$ passes completos válidos analisados em estado estacionário puro ($|V| = 11$ em cada partida). A Tabela \ref{tab:resultados_pagerank} consolida a saída quantitativa exata do DataFrame \texttt{ranking\_medio} gerado pelo notebook:
+
+\begin{table}[H]
+\centering
+\caption{Ranking consolidado de centralidade PageRank dos titulares da Seleção Argentina nas partidas \texttt{3869321} (Quartas), \texttt{3869519} (Semifinal) e \texttt{3869685} (Final).}
+\label{tab:resultados_pagerank}
+\vspace{0.05cm}
+\footnotesize
+\begin{tabularx}{\linewidth}{c X l c c}
+\toprule
+\textbf{Pos.} & \textbf{Jogador (Vértice $v_i \in V$)} & \textbf{Função Tática Principal} & \textbf{Jogos Titular} & \textbf{Média PageRank ($\bar{\pi}_i$)} \\
+\midrule
+1º  & Rodrigo Javier De Paul              & Meio-campista (Interior Direito) & 3 & \textbf{0,125532} \\
+2º  & Enzo Fernandez                      & Volante Central (\textit{Pivote}) & 3 & \textbf{0,120733} \\
+3º  & Nicolás Hernán Otamendi             & Zagueiro Central Esquerdo         & 3 & \textbf{0,117150} \\
+4º  & Leandro Daniel Paredes              & Volante de Contenção              & 1 & 0,115103 \\
+5º  & Ángel Fabián Di María Hernández     & Extremo Ofensivo                  & 1 & 0,098491 \\
+6º  & Lionel Andrés Messi Cuccittini      & Meia-Atacante / Falso 9           & 3 & \textbf{0,097647} \\
+7º  & Alexis Mac Allister                 & Meio-campista (Interior Esquerdo) & 3 & \textbf{0,097105} \\
+8º  & Cristian Gabriel Romero             & Zagueiro Central Direito          & 3 & 0,090167 \\
+9º  & Nahuel Molina Lucero                & Lateral / Ala Direito             & 3 & 0,082871 \\
+10º & Marcos Javier Acuña                 & Lateral / Ala Esquerdo            & 1 & 0,080417 \\
+11º & Lisandro Martínez                   & Zagueiro (Linha de Três)          & 1 & 0,071791 \\
+12º & Nicolás Alejandro Tagliafico        & Lateral Esquerdo                  & 2 & 0,064414 \\
+13º & Julián Álvarez                      & Centroavante de Mobilidade        & 3 & \textbf{0,063798} \\
+14º & Damián Emiliano Martínez            & Goleiro                           & 3 & 0,040121 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%Conclusão
+\section{\sffamily Conclusão}
+
+\subsection{\sffamily Discussão Crítica dos Resultados}
+
+A inspeção analítica da Tabela \ref{tab:resultados_pagerank} e das Figuras \ref{fig:rede_passes} e \ref{fig:barras_pagerank} revela um resultado de profunda relevância tática e matemática: os dois jogadores com maior centralidade de PageRank ao longo da fase eliminatória da Copa do Mundo de 2022 não foram os atacantes responsáveis pelos gols, mas sim os meio-campistas de sustentação e articulação \textbf{Rodrigo De Paul} ($\bar{\pi} = 0{,}125532$) e \textbf{Enzo Fernández} ($\bar{\pi} = 0{,}120733$), seguidos imediatamente pelo zagueiro construtor \textbf{Nicolás Otamendi} ($\bar{\pi} = 0{,}117150$). Em contrapartida, os dois principais finalizadores e artilheiros da equipe --- \textbf{Lionel Messi} ($\bar{\pi} = 0{,}097647$, 6º lugar geral) e \textbf{Julián Álvarez} ($\bar{\pi} = 0{,}063798$, 13º lugar geral, superando apenas o goleiro Emiliano Martínez com $0{,}040121$) --- apresentaram valores de PageRank substancialmente inferiores aos dos organizadores da base da jogada.
+
+Longe de constituir um paradoxo, essa hierarquia comprova a capacidade do modelo estocástico de capturar a divisão estrutural do trabalho tático em uma rede de fluxo direcionado, explicada por três mecanismos matemáticos fundamentais:
+
+\begin{enumerate}
+    \item \textbf{Reciprocidade Ciclicamente Fechada vs. Absorção Terminal:} Pela Equação (\ref{eq:pagerank_scalar}), o PageRank $\pi_i$ depende recursivamente da soma $\sum_{j \in N^{-}(i)} \frac{w(j, i)}{d^{+}_{w}(j)} \pi_j$. Na fase de construção e progressão (\textit{build-up}), Otamendi, Enzo Fernández e Rodrigo De Paul operam como o ``motor'' de circulação da Argentina: quando a progressão vertical encontra linhas defensivas compactas, a bola retorna a esses três vértices para reiniciar o ciclo e inverter o corredor de ataque. Matematicamente, eles pertencem ao núcleo de ciclos curtos de alta frequência ($u \leftrightarrow v \leftrightarrow w$), acumulando massa estacionária continuamente.
+    \item \textbf{O Papel de Lionel Messi como Conector de Último Terço ($\bar{\pi} = 0{,}0976$):} Embora Messi atue no terço ofensivo --- onde a densidade espacial de marcadores reduz o volume bruto de passes ---, seu PageRank de $0{,}097647$ supera a média uniforme teórica de um grafo de $11$ vértices ($1/11 = 0{,}090909$). Isso ocorre porque De Paul ($0{,}1255$) e Enzo Fernández ($0{,}1207$) canalizam preferencialmente suas arestas de saída em direção a Messi no entrelinhas direito. Como Messi recebe uma fração elevada do fluxo proveniente dos dois nós de maior PageRank de toda a rede, o termo $\frac{w(j, \text{Messi})}{d^{+}_{w}(j)} \pi_j$ transfere a ele uma expressiva centralidade herdada.
+    \item \textbf{Julián Álvarez como Vértice Absorvente de Finalização ($\bar{\pi} = 0{,}0637$):} Um centroavante de ruptura e profundidade como Julián Álvarez atua na extremidade final da cadeia de Markov. Ele é acionado prioritariamente em bolas em profundidade para finalizar a gol (evento que encerra a sequência de passes) ou disputar duelos de alto risco na área adversária, participando minimamente da recirculação intermediária. Na topologia do digrafo, Álvarez comporta-se quase como um sumidouro terminal (\textit{sink node}) com baixo grau de entrada recorrente, o que explica rigorosamente seu PageRank de $0{,}063798$ no modelo de fluxo bruto e evidencia por que a incorporação dos pesos $\omega_{\text{tatico}}$, $\omega_{\text{xT}}$ e $\omega_{\text{xG}}$ (desenvolvidos na Seção 3.3 e ilustrados na Figura \ref{fig:heatmap_xt}) é indispensável quando se deseja reponderar o grafo em favor da letalidade no terço final.
+\end{enumerate}
+
+\subsection{\sffamily Perspectivas Futuras}
+
+O arcabouço metodológico desenvolvido neste trabalho abre múltiplas frentes de investigação em modelagem matemática do futebol. Uma extensão imediata consiste na ativação sistemática do \textbf{PageRank Personalizado} (\textit{Personalized PageRank}) por meio do parâmetro \texttt{vetor\_personalizacao} já implementado em nossa função \texttt{calcular\_pagerank\_futebol}. Ao substituir o vetor de teletransporte uniforme $v_i = 1/n$ pela distribuição empírica de recuperações de posse e interceptações calculada no código (\texttt{vetor\_inicio\_posse}), o processo de Markov passa a reiniciar exatamente nos atletas que mais desarmam o adversário, acoplando a eficiência defensiva de recuperação à centralidade ofensiva de construção em um único autovetor estacionário.
+
+Em segundo lugar, a incorporação de dados de rastreamento óptico (\textit{optical tracking data} a $25$ Hz), em complemento aos dados de eventos da StatsBomb, permitiria ponderar cada aresta pela quantidade exata de defensores adversários ultrapassados pelo passe (\textit{packing rate}) e pela abertura de linhas de passe gerada por deslocamentos sem bola. Por fim, a generalização do grafo estático para \textbf{redes temporais multicamada} (\textit{multilayer temporal networks}), nas quais cada janela de $15$ minutos constitui uma camada acoplada, permitiria rastrear dinamicamente como as substituições no segundo tempo alteram o espectro da Matriz de Google e reconfiguram a liderança tática da equipe ao longo da partida.
+
+% Referências
+\vspace{0.1cm}
+\begin{thebibliography}{99}
+
+\bibitem{wilson1996}
+WILSON, Robin J. \textit{Introduction to Graph Theory}. 4. ed. Harlow: Longman, 1996.
+
+\bibitem{west2001}
+WEST, Douglas B. \textit{Introduction to Graph Theory}. 2. ed. Upper Saddle River: Prentice Hall, 2001.
+
+\bibitem{strang2016}
+STRANG, Gilbert. \textit{Introduction to Linear Algebra}. 5. ed. Wellesley: Wellesley-Cambridge Press, 2016.
+
+\bibitem{axler2015}
+AXLER, Sheldon. \textit{Linear Algebra Done Right}. 3. ed. Cham: Springer, 2015.
+
+\bibitem{brin1998}
+BRIN, Sergey; PAGE, Lawrence. The anatomy of a large-scale hypertextual Web search engine. \textit{Computer Networks and ISDN Systems}, v. 30, n. 1--7, p. 107--117, 1998.
+
+\bibitem{langville2006}
+LANGVILLE, Amy N.; MEYER, Carl D. \textit{Google's PageRank and Beyond: The Science of Search Engine Rankings}. Princeton: Princeton University Press, 2006.
+
+\bibitem{singh2018}
+SINGH, Karun. Introducing Expected Threat (xT): Modelling team behaviour in possession to gain a deeper understanding of build-up play. \textit{Karun.in Sports Analytics Blog}, 2018.
+
+\bibitem{pena2012}
+PEÑA, Javier L.; TOUCHETTE, Hugo. A network theory analysis of football strategies. \textit{arXiv preprint arXiv:1206.6904}, 2012.
+
+\bibitem{buldu2018}
+BULDÚ, Javier M. et al. Using network science to analyse football passing networks: Dynamics, space, time, and the multilayer nature of the game. \textit{Frontiers in Psychology}, v. 9, art. 1900, 2018.
+
+\bibitem{statsbomb2022}
+STATSBOMB. \textit{StatsBomb Open Data \& statsbombpy Documentation: FIFA World Cup 2022 Event Dataset}. Disponível em: \url{https://github.com/statsbomb/open-data}. Acesso em: 17 nov. 2026.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,502 @@
+%% Template beamer nao oficial com a identidade visual da FGV.
+%% Baseado no template do IMPA de Rafael Vieira Westenberger (CC BY-SA 4.0),
+%% totalmente reescrito segundo o "Manual de Identidade Visual - Conveniadas
+%% IDE" (FGV/SCM, maio de 2009):
+%%   * Cor padrao: azul escuro, Pantone 281C, RGB 28/47/103 (pag. 11)
+%%   * Tipografia: Arial e derivados para documentos (pag. 10); aqui,
+%%     Helvetica (helvet) em pdfLaTeX; titulos em versao condensada,
+%%     como no manual (Zurich Cn BT)
+%%   * Marca FGV (simbolo V + "FGV"): vetor extraido do proprio manual,
+%%     embutido abaixo em \fgvlogo -- nao e preciso nenhum arquivo externo
+%%   * Layout inspirado no manual: faixa de titulo com filete azul,
+%%     rodape com filete duplo, capa com faixa lateral azul, caixas
+%%     lavanda com seta
+%% Versão de 8 páginas exatas baseada no Relatório Final do Projeto (FGV EMAp).
+%% Compile com pdfLaTeX (ou lualatex / latexmk -pdf).
+
+\documentclass[aspectratio=1610,10pt]{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{babel}
+\babelprovide[import, main]{portuguese} % Garante a hifenização correta e tradução de termos
+\usepackage{amsmath, amssymb, amsthm, mathtools} % Rigor matemático e símbolos
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{hyperref} % Links interativos
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{microtype}
+\usepackage{tikz}
+\usefonttheme[onlymath]{serif}
+
+% Configuração para sumário e links interativos discretos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=main,
+    urlcolor=main,
+    citecolor=main
+}
+
+% Ambientes matemáticos
+\newtheorem{teorema}{Teorema}
+\newtheorem{lema}{Lema}
+\newtheorem{definicao}{Definição}
+
+%ID visual FGv
+\definecolor{main}{RGB}{28,47,103}   
+\definecolor{fgvcyan}{RGB}{0,173,239}  
+\definecolor{fgvlav}{RGB}{192,194,223} 
+\definecolor{fgvgray}{RGB}{120,126,138}  
+\definecolor{fgvink}{RGB}{35,31,32} 
+\newcommand{\fgvlogo}[2][main]{%
+  \begin{pgfpicture}%
+    \pgftransformscale{#2}%
+    \pgfsetfillcolor{#1}%
+\pgfpathmoveto{\pgfpoint{20.266pt}{22.020pt}}%
+\pgfpathlineto{\pgfpoint{26.312pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{37.504pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{25.953pt}{18.344pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{0.000pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{10.996pt}{26.008pt}}%
+\pgfpathlineto{\pgfpoint{22.977pt}{12.234pt}}%
+\pgfpathlineto{\pgfpoint{11.980pt}{12.234pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{9.211pt}{0.141pt}}%
+\pgfpathlineto{\pgfpoint{9.211pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{13.883pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{13.883pt}{7.805pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{7.805pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{5.641pt}}%
+\pgfpathlineto{\pgfpoint{13.754pt}{5.641pt}}%
+\pgfpathlineto{\pgfpoint{13.754pt}{4.246pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{4.246pt}}%
+\pgfpathlineto{\pgfpoint{11.121pt}{0.141pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{20.961pt}{4.910pt}}%
+\pgfpathlineto{\pgfpoint{20.961pt}{0.309pt}}%
+\pgfpathcurveto{\pgfpoint{20.352pt}{0.199pt}}{\pgfpoint{19.836pt}{0.117pt}}{\pgfpoint{19.410pt}{0.070pt}}%
+\pgfpathcurveto{\pgfpoint{18.988pt}{0.023pt}}{\pgfpoint{18.605pt}{0.000pt}}{\pgfpoint{18.262pt}{0.000pt}}%
+\pgfpathcurveto{\pgfpoint{17.707pt}{0.000pt}}{\pgfpoint{17.242pt}{0.051pt}}{\pgfpoint{16.859pt}{0.152pt}}%
+\pgfpathcurveto{\pgfpoint{16.477pt}{0.258pt}}{\pgfpoint{16.164pt}{0.410pt}}{\pgfpoint{15.918pt}{0.621pt}}%
+\pgfpathcurveto{\pgfpoint{15.551pt}{0.949pt}}{\pgfpoint{15.285pt}{1.410pt}}{\pgfpoint{15.129pt}{2.004pt}}%
+\pgfpathcurveto{\pgfpoint{14.973pt}{2.602pt}}{\pgfpoint{14.895pt}{3.562pt}}{\pgfpoint{14.895pt}{4.887pt}}%
+\pgfpathcurveto{\pgfpoint{14.895pt}{5.797pt}}{\pgfpoint{14.941pt}{6.508pt}}{\pgfpoint{15.039pt}{7.012pt}}%
+\pgfpathcurveto{\pgfpoint{15.137pt}{7.516pt}}{\pgfpoint{15.297pt}{7.934pt}}{\pgfpoint{15.520pt}{8.270pt}}%
+\pgfpathcurveto{\pgfpoint{15.754pt}{8.617pt}}{\pgfpoint{16.086pt}{8.879pt}}{\pgfpoint{16.508pt}{9.055pt}}%
+\pgfpathcurveto{\pgfpoint{16.930pt}{9.230pt}}{\pgfpoint{17.449pt}{9.316pt}}{\pgfpoint{18.066pt}{9.316pt}}%
+\pgfpathcurveto{\pgfpoint{19.008pt}{9.316pt}}{\pgfpoint{19.727pt}{9.078pt}}{\pgfpoint{20.219pt}{8.609pt}}%
+\pgfpathcurveto{\pgfpoint{20.711pt}{8.137pt}}{\pgfpoint{20.961pt}{7.449pt}}{\pgfpoint{20.961pt}{6.543pt}}%
+\pgfpathlineto{\pgfpoint{20.961pt}{6.406pt}}%
+\pgfpathlineto{\pgfpoint{19.102pt}{6.406pt}}%
+\pgfpathlineto{\pgfpoint{19.102pt}{6.520pt}}%
+\pgfpathcurveto{\pgfpoint{19.102pt}{7.031pt}}{\pgfpoint{19.008pt}{7.410pt}}{\pgfpoint{18.832pt}{7.660pt}}%
+\pgfpathcurveto{\pgfpoint{18.652pt}{7.906pt}}{\pgfpoint{18.379pt}{8.031pt}}{\pgfpoint{18.012pt}{8.031pt}}%
+\pgfpathcurveto{\pgfpoint{17.547pt}{8.031pt}}{\pgfpoint{17.230pt}{7.824pt}}{\pgfpoint{17.055pt}{7.414pt}}%
+\pgfpathcurveto{\pgfpoint{16.883pt}{7.000pt}}{\pgfpoint{16.793pt}{6.094pt}}{\pgfpoint{16.793pt}{4.695pt}}%
+\pgfpathcurveto{\pgfpoint{16.793pt}{3.215pt}}{\pgfpoint{16.898pt}{2.285pt}}{\pgfpoint{17.109pt}{1.902pt}}%
+\pgfpathcurveto{\pgfpoint{17.320pt}{1.520pt}}{\pgfpoint{17.715pt}{1.328pt}}{\pgfpoint{18.293pt}{1.328pt}}%
+\pgfpathcurveto{\pgfpoint{18.422pt}{1.328pt}}{\pgfpoint{18.559pt}{1.340pt}}{\pgfpoint{18.707pt}{1.359pt}}%
+\pgfpathcurveto{\pgfpoint{18.859pt}{1.379pt}}{\pgfpoint{19.031pt}{1.414pt}}{\pgfpoint{19.234pt}{1.461pt}}%
+\pgfpathlineto{\pgfpoint{19.234pt}{3.488pt}}%
+\pgfpathlineto{\pgfpoint{18.191pt}{3.488pt}}%
+\pgfpathlineto{\pgfpoint{18.191pt}{4.910pt}}%
+\pgfpathclose%
+\pgfpathmoveto{\pgfpoint{23.707pt}{0.129pt}}%
+\pgfpathlineto{\pgfpoint{21.430pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{23.406pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{24.336pt}{4.473pt}}%
+\pgfpathcurveto{\pgfpoint{24.488pt}{3.703pt}}{\pgfpoint{24.605pt}{3.102pt}}{\pgfpoint{24.680pt}{2.664pt}}%
+\pgfpathcurveto{\pgfpoint{24.750pt}{2.230pt}}{\pgfpoint{24.805pt}{1.840pt}}{\pgfpoint{24.836pt}{1.500pt}}%
+\pgfpathcurveto{\pgfpoint{24.898pt}{2.059pt}}{\pgfpoint{24.969pt}{2.590pt}}{\pgfpoint{25.051pt}{3.090pt}}%
+\pgfpathcurveto{\pgfpoint{25.129pt}{3.586pt}}{\pgfpoint{25.219pt}{4.047pt}}{\pgfpoint{25.316pt}{4.473pt}}%
+\pgfpathlineto{\pgfpoint{26.398pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{28.309pt}{9.203pt}}%
+\pgfpathlineto{\pgfpoint{25.941pt}{0.129pt}}%
+\pgfpathlineto{\pgfpoint{23.707pt}{0.129pt}}%
+    \pgfseteorule\pgfusepath{fill}%
+  \end{pgfpicture}}
+\newcommand{\fgvcondensed}{\fontfamily{phv}\fontshape{n}\selectfont}
+
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large,series=\mdseries}
+\setbeamerfont{frametitle}{size=\LARGE,series=\mdseries}
+\setbeamerfont{block title}{size=\footnotesize,series=\bfseries}
+\setbeamerfont{block body}{size=\footnotesize}
+\setbeamerfont{footline}{size=\scriptsize}
+\setbeamercolor{normal text}{fg=fgvink,bg=white}
+\setbeamercolor{structure}{fg=main}
+\setbeamercolor{alerted text}{fg=fgvcyan!85!black}
+\setbeamercolor{example text}{fg=main}
+\setbeamercolor{frametitle}{fg=main}
+\setbeamercolor{title}{fg=fgvink}
+\setbeamercolor{subtitle}{fg=main}
+\setbeamercolor{author}{fg=fgvink}
+\setbeamercolor{institute}{fg=fgvgray}
+\setbeamercolor{date}{fg=fgvgray}
+\setbeamercolor{block title}{fg=main,bg=fgvlav}
+\setbeamercolor{block body}{fg=fgvink,bg=fgvlav!22}
+\setbeamercolor{block title alerted}{fg=main,bg=fgvcyan!35}
+\setbeamercolor{block body alerted}{fg=fgvink,bg=fgvcyan!8}
+\setbeamercolor{block title example}{fg=main,bg=fgvlav}
+\setbeamercolor{block body example}{fg=fgvink,bg=fgvlav!22}
+\setbeamercolor{item}{fg=main}
+\setbeamercolor{caption name}{fg=main}
+\setbeamercolor{footnote}{fg=fgvgray}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\scriptsize$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\tiny$\blacktriangleright$}
+\setbeamertemplate{itemize subsubitem}{\tiny$\blacktriangleright$}
+\setbeamertemplate{enumerate item}{\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\insertenumlabel.\insertsubenumlabel}
+\setbeamertemplate{caption}[numbered]
+\setbeamertemplate{caption label separator}{: }
+\setbeamertemplate{frametitle continuation}{}
+\setbeamersize{text margin left=1.2cm,text margin right=1.2cm}
+\newcommand{\fgv}{}   
+\newif\iffgvnumber    
+\fgvnumbertrue
+
+\setbeamertemplate{headline}{%
+  \ifnum\value{page}=1\relax\else
+  \leavevmode
+  \begin{tikzpicture}[remember picture,overlay]
+    \shade[top color=fgvlav!45,bottom color=white]
+      (current page.north west) rectangle ([yshift=-1.42cm]current page.north east);
+    \fill[main] ([yshift=-1.42cm]current page.north west)
+      rectangle ([yshift=-1.49cm,xshift=-2.35cm]current page.north east);
+    \node[anchor=east,inner sep=0pt] at
+      ([xshift=-1.0cm,yshift=-0.74cm]current page.north east)
+      {\fgvlogo{0.60}};
+  \end{tikzpicture}%
+  \fi}
+
+\setbeamertemplate{frametitle}{%
+  \vbox{%
+    \vskip0.24cm
+    \begin{beamercolorbox}[wd=\paperwidth,ht=0.92cm,dp=0.18cm,leftskip=1.2cm,rightskip=3.2cm]{frametitle}%
+      \fgvcondensed\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}%
+      \iffgvnumber\ifnum\value{section}>0
+        {\color{fgvcyan}\fontseries{b}\selectfont\thesection.}\,%
+      \fi\fi
+      \insertframetitle\par
+    \end{beamercolorbox}%
+    \vskip0.22cm}}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[fgvlav]
+      ([yshift=0.45cm]current page.south west) rectangle
+      ([yshift=0.41cm]current page.south east);
+    \fill[main]
+      ([yshift=0.54cm]current page.south west) rectangle
+      ([yshift=0.49cm,xshift=-0.3cm]current page.south east);
+    \node[anchor=east,inner sep=0pt,text=fgvgray] at
+      ([xshift=-0.6cm,yshift=0.23cm]current page.south east)
+      {\usebeamerfont{footline}\insertframenumber\ / \inserttotalframenumber};
+    \node[anchor=west,inner sep=0pt,text=fgvgray] at
+      ([xshift=1.2cm,yshift=0.23cm]current page.south west)
+      {\usebeamerfont{footline}\insertshortauthor};
+  \end{tikzpicture}%
+  \vskip0.55cm}
+\setbeamertemplate{blocks}[default]
+\setbeamertemplate{block begin}{%
+  \par\vskip0.12cm
+  \begin{beamercolorbox}[colsep*=0pt,leftskip=0pt,rightskip=0pt,wd=\textwidth]{block title}%
+    \begin{tikzpicture}[baseline=(t.base)]
+      \node[inner sep=0pt] (t) {\strut};
+    \end{tikzpicture}%
+    \hspace*{0.18cm}\raisebox{0.02cm}{\color{main}$\Rightarrow$}\hspace*{0.15cm}%
+    \usebeamerfont{block title}\insertblocktitle\strut\hfill
+  \end{beamercolorbox}%
+  \nointerlineskip
+  \begin{beamercolorbox}[colsep=0.20cm,vmode,wd=\textwidth]{block body}%
+    \ifbeamercolorempty[bg]{block body}{}{\vskip0.03cm}
+    \usebeamerfont{block body}}
+\setbeamertemplate{block end}{%
+    \vskip0.03cm
+  \end{beamercolorbox}%
+  \vskip0.12cm}
+\newcommand{\fgvband}{Apresentação}
+
+\setbeamertemplate{title page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \shade[top color=fgvlav!35,bottom color=white,shading angle=0]
+      (current page.south west) rectangle (current page.north east);
+    \begin{scope}[opacity=0.07]
+      \node[inner sep=0pt,anchor=center] at
+        ([xshift=1.0cm,yshift=3.3cm]current page.center) {\fgvlogo[main]{4.2}};
+    \end{scope}
+    \fill[main] ([xshift=-3.3cm]current page.north east) rectangle
+      (current page.south east);
+    \node[rotate=90,text=white,inner sep=0pt,anchor=west] at
+      ([xshift=-1.65cm,yshift=3.7cm]current page.south east)
+      {\fgvcondensed\itshape\fontsize{20}{20}\selectfont\MakeUppercase{\fgvband}};
+    \node[anchor=south,inner sep=0pt] at
+      ([xshift=-1.65cm,yshift=1.1cm]current page.south east)
+      {\fgvlogo[white]{1.35}};
+    \node[anchor=south west,text width=\paperwidth-7.4cm,inner sep=0pt] at
+      ([xshift=1.4cm,yshift=5.25cm]current page.south west)
+      {\raggedright\usebeamercolor[fg]{title}\fgvcondensed\usebeamerfont{title}\inserttitle\par
+       \vspace{0.15cm}
+       \usebeamercolor[fg]{subtitle}\usebeamerfont{subtitle}\insertsubtitle};
+    \fill[main] ([xshift=1.4cm,yshift=4.95cm]current page.south west)
+      rectangle ([xshift=-3.3cm,yshift=4.88cm]current page.south east);
+    \node[anchor=north west,text width=\paperwidth-7.4cm,inner sep=0pt] at
+      ([xshift=1.4cm,yshift=4.65cm]current page.south west)
+      {\raggedright\usebeamercolor[fg]{author}\insertauthor\par
+       \vspace{0.2cm}
+       \usebeamercolor[fg]{institute}\footnotesize\insertinstitute\par
+       \vspace{0.15cm}
+       \usebeamercolor[fg]{date}\insertdate};
+  \end{tikzpicture}}
+\newenvironment{fgvfocus}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[main] (current page.south west) rectangle (current page.north east);
+    \node[anchor=south east,inner sep=0pt] at
+      ([xshift=-1.0cm,yshift=0.8cm]current page.south east)
+      {\fgvlogo[white]{1.1}};
+  \end{tikzpicture}%
+  \color{white}%
+  \begin{center}\fgvcondensed\fontsize{28}{34}\selectfont
+}{\end{center}}
+\AtBeginSection[]{}
+\AtBeginSubsection[]{}
+\title{Encontrando o Jogador Mais Importante em Campo:\\Aplicando PageRank em Redes de Passes}
+
+\author[E. Alberti, J. Santos, L. Bicca \& L. Porto]{%
+        Erick Alberti\footnote{\label{fgv}Fundação Getulio Vargas (FGV EMAp), Rio de Janeiro, Brasil},
+        Josué Santos\textsuperscript{\ref{fgv}},
+        Leonardo Bicca\textsuperscript{\ref{fgv}} \&
+        Luigi Porto\textsuperscript{\ref{fgv}}}
+\institute{Apresentado por: Erick Alberti, Josué Santos, Leonardo Bicca e Luigi Porto}
+\date{19 de novembro de 2026}
+
+\begin{document}
+
+%Slide 1
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% Slide 2
+\section{Introdução e Motivação}
+\subsection{O Algoritmo PageRank}
+\begin{frame}{O algoritmo PageRank}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.56\textwidth}
+      \footnotesize
+      \begin{itemize}
+        \setlength{\itemsep}{6pt}
+        \item \textbf{Limitação das Estatísticas Terminais:} Gols e assistências avaliam apenas o fim da jogada, ignorando a estrutura topológica da posse de bola.
+        \item \textbf{Da Web para o Gramado:} Criado por Brin \& Page (1998) para o Google, o \textit{PageRank} modela o fluxo em um \textbf{digrafo ponderado} $G=(V, E, w)$:
+        \begin{itemize}
+          \footnotesize
+          \item \textbf{Vértices ($V$):} Os $11$ atletas titulares em campo;
+          \item \textbf{Arestas Direcionadas ($E$):} Passes concluídos valorados por peso tático ($w_{ij}$).
+        \end{itemize}
+        \item \textbf{Princípio de Centralidade Recursiva:} Um jogador é estruturalmente vital quando \textbf{recebe passes frequentes e qualificados de outros grandes articuladores}.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{block}{Hipótese Tática Central}
+        Quem sustenta o fluxo ofensivo da Seleção Argentina campeã de 2022: os finalizadores de último terço ou a base de circulação do meio-campo?
+      \end{block}
+      \begin{block}{Topologia do Fluxo ($G = (V, E, w)$)}
+        \centering
+        $\text{Otamendi} \xleftrightarrow{w_{ij}} \text{Enzo} \xleftrightarrow{w_{ij}} \text{De Paul}$\\[0.12cm]
+        $\Downarrow \quad (\text{Transferência Recursiva }\pi_j)$\\[0.12cm]
+        $\textbf{Lionel Messi} \xrightarrow{\text{Assistência}} \text{J. Álvarez}$
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 3
+\section{Modelagem e Fundamentação Matemática}
+\subsection{Definições de Teoria dos Grafos}
+\begin{frame}{Estruturas Básicas de Teoria dos Grafos e Conectividade}
+  \footnotesize
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.53\textwidth}
+      \begin{itemize}
+        \setlength{\itemsep}{5pt}
+        \item \textbf{Digrafo Ponderado $G = (V, E, w)$:} Pares ordenados $(u, v) \in E$ associados a uma função de peso não negativa $w: E \to \mathbb{R}_{+}$.
+        \item \textbf{Graus de Entrada e Saída Ponderados:}
+        \[
+          d^{+}_{w}(u) = \sum_{v \in V} w(u, v), \qquad d^{-}_{w}(u) = \sum_{v \in V} w(v, u)
+        \]
+        \item \textbf{Matriz de Adjacência Ponderada ($W$):} Matriz $n \times n$ tal que $W_{ij} = w(v_i, v_j)$ codifica algebricamente a rede.
+        \item \textbf{Conectividade Forte:} Existe caminho direcionado de $u$ a $v$ e de $v$ a $u$ para todo par de atletas, evitando nós absorventes (\textit{dangling nodes}).
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \begin{block}{Isolamento até a 1ª Substituição}
+        Substituições alteram o espaço de estados $V$. Truncamos os dados da \textbf{StatsBomb} exatamente na \textbf{1ª substituição} ($61$--$65$ min), preservando $|V| = 11$ estacionário.
+      \end{block}
+      \begin{block}{Engenharia de Pesos ($w_{ij} > 0$)}
+        \begin{itemize}
+          \scriptsize
+          \item \textbf{Peso Tático:} $1 + \frac{\Delta D_{\text{gol}}}{10} + 5\mathbb{I}_{\text{chute}}$ ($\times 1{,}5$ sob pressão);
+          \item \textbf{Expected Threat ($xT$):} Matriz $8 \times 12$ de Karun Singh ($\Delta xT > 0$);
+          \item \textbf{Expected Goals ($xG$):} $0{,}05 + xA + 0{,}5\cdot xG_{\text{posse}}$.
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% Slide 4
+\subsection{Definições de Álgebra Linear}
+\begin{frame}{Autovalores, Autovetores e o Teorema Fundamental}
+  \footnotesize
+  \begin{itemize}
+    \setlength{\itemsep}{4pt}
+    \item \textbf{Operador de Transição Estocástico ($P$):} A probabilidade de a bola ir do atleta $j$ para $i$ em um passe é $P_{ij} = \mathbb{P}(X_{k+1}=i \mid X_k=j) = \dfrac{w(j, i)}{d^{+}_{w}(j)}$, satisfazendo $\sum_{i=1}^{n} P_{ij} = 1$.
+  \end{itemize}
+  \begin{definicao}[Autovalores, Autovetores e Distribuição Estacionária]
+    Um escalar $\lambda \in \mathbb{C}$ é autovalor de $M$ se existe $\mathbf{x} \neq \mathbf{0}$ tal que $M\mathbf{x} = \lambda \mathbf{x}$. O vetor de estado $\mathbf{r} \in \mathbb{R}^n_{+}$ é a \textbf{distribuição estacionária} da cadeia se é autovetor associado a $\lambda = 1$ ($M\mathbf{r} = \mathbf{r}$ com $\sum_{i=1}^n r_i = 1$).
+  \end{definicao}
+  \begin{teorema}[Teorema de Perron-Frobenius]
+    Para toda matriz estocástica por colunas com entradas estritamente positivas ($G_{ij} > 0$):
+    \begin{itemize}
+      \footnotesize
+      \item O autovalor dominante é único, simples e igual a $\lambda_1 = 1$ (com $|\lambda| < 1$ para todo $\lambda \neq 1$);
+      \item Existe um \textbf{único autovetor estacionário} $\mathbf{r}$ com componentes estritamente positivas ($r_i > 0$).
+    \end{itemize}
+  \end{teorema}
+\end{frame}
+
+% Slide 5
+\subsection{Dedução da fórmula do PageRank}
+\begin{frame}{A estrutura matemática do PageRank e dedução do caso geral}
+  \footnotesize
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.53\textwidth}
+      \begin{itemize}
+        \setlength{\itemsep}{5pt}
+        \item \textbf{Mecanismo Duplo (Caminhada + Teletransporte):}
+        \begin{itemize}
+          \footnotesize
+          \item Probabilidade $\alpha$: segue uma aresta do grafo ($P$);
+          \item Probabilidade $1-\alpha$: reinicia a posse segundo o vetor $\mathbf{v}$ (\textbf{teletransporte}).
+        \end{itemize}
+        \item \textbf{Pela Lei da Probabilidade Total:}
+        \[
+          r_i^{(k+1)} = \alpha \sum_{j=1}^{n} P_{ij} r_j^{(k)} + (1-\alpha) v_i
+        \]
+        \item \textbf{Matriz de Google e Equação Matricial:}
+        \[
+          G = \alpha P + (1-\alpha)\mathbf{v}\mathbf{1}^{\top} \implies \boxed{\mathbf{r}^{(k+1)} = \alpha P\mathbf{r}^{(k)} + (1-\alpha)\mathbf{v}}
+        \]
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \begin{block}{Fator de Amortecimento Empírico ($\hat{\alpha}$)}
+        Estimamos $\alpha$ diretamente dos dados da partida como a taxa de continuidade da posse:
+        \[
+          \hat{\alpha} = \frac{N_{\text{cont}}}{N_{\text{cont}} + N_{\text{errados}} + N_{\text{chutes}} + N_{\text{perdas}}}
+        \]
+      \end{block}
+      \begin{block}{Convergência Global ($\ell_1$-Contração)}
+        \[
+          \|\mathbf{r}^{(k)} - \mathbf{r}\|_1 \le \alpha^k \|\mathbf{r}^{(0)} - \mathbf{r}\|_1 \le 2\alpha^k \xrightarrow{k\to\infty} 0
+        \]
+        Para \texttt{tol = 1e-8}, converge em $\approx 86$ iterações.
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+% SLIDE 6
+\section{Aplicação e Análise de Resultados}
+\begin{frame}{Resultados do Mapeamento Ofensivo}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.54\textwidth}
+      \scriptsize
+      \textbf{Recorte Empírico (Copa do Mundo FIFA 2022 --- $855$ passes):}
+      \begin{itemize}
+        \setlength{\itemsep}{2pt}
+        \item \textbf{Quartas (Holanda, \texttt{3869321}):} $65$ min | $295$ passes | $11$ titulares
+        \item \textbf{Semifinal (Croácia, \texttt{3869519}):} $61$ min | $243$ passes | $11$ titulares
+        \item \textbf{Final (França, \texttt{3869685}):} $63$ min | $317$ passes | $11$ titulares
+      \end{itemize}
+      \vspace{0.1cm}
+      \centering
+      \begin{tabularx}{\linewidth}{c X c c}
+        \toprule
+        \textbf{Pos.} & \textbf{Jogador Titular ($v_i \in V$)} & \textbf{Jogos} & \textbf{Média PageRank} \\
+        \midrule
+        \textbf{1º} & \textbf{Rodrigo Javier De Paul}          & 3 & \textbf{0,125532} \\
+        \textbf{2º} & \textbf{Enzo Fernandez}                  & 3 & \textbf{0,120733} \\
+        \textbf{3º} & \textbf{Nicolás Hernán Otamendi}         & 3 & \textbf{0,117150} \\
+        4º          & Leandro Daniel Paredes                   & 1 & 0,115103 \\
+        5º          & Ángel Fabián Di María Hernández          & 1 & 0,098491 \\
+        \textbf{6º} & \textbf{Lionel Andrés Messi Cuccittini}  & 3 & \textbf{0,097647} \\
+        7º          & Alexis Mac Allister                      & 3 & 0,097105 \\
+        8º          & Cristian Gabriel Romero                  & 3 & 0,090167 \\
+        13º         & \textbf{Julián Álvarez}                  & 3 & \textbf{0,063798} \\
+        14º         & Damián Emiliano Martínez                 & 3 & 0,040121 \\
+        \bottomrule
+      \end{tabularx}
+    \end{column}
+    \begin{column}{0.44\textwidth}
+      \begin{block}{Visualizações de Publicação Acadêmica}
+        \centering
+        \textbf{1. Rede Direcionada (\texttt{fig\_rede\_passes.pdf}):}\\
+        Triângulo central Otamendi--Enzo--De Paul concentra a maior espessura tática $w_{ij}$.\\[0.15cm]
+        \textbf{2. Ranking de Barras (\texttt{fig\_ranking\_pagerank.pdf}):}\\
+        Sete titulares operam acima da linha de referência uniforme ($1/11 = 0{,}0909$).\\[0.15cm]
+        \textbf{3. Mapa de Calor $xT$ (\texttt{fig\_heatmap\_xt.pdf}):}\\
+        Rupturas de De Paul e Messi alimentam a zona de máximo valor ($xT = 0{,}2575$).
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+% SLIDE 7
+\section{Conclusão e Trabalhos Futuros}
+\begin{frame}{Conclusões}
+  \footnotesize
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.56\textwidth}
+      \begin{block}{Discussão Crítica: A Mecânica do ``Efeito Messi''}
+        \begin{itemize}
+          \footnotesize
+          \setlength{\itemsep}{4pt}
+          \item \textbf{Motor de Recirculação vs.\ Nó Absorvente:} De Paul ($0{,}1255$), Enzo ($0{,}1207$) e Otamendi ($0{,}1172$) formam ciclos fechados de sustentação (\textit{build-up}). Já \textbf{Julián Álvarez ($0{,}0638$)} atua como finalizador terminal (\textit{sink node}), encerrando a cadeia com chutes.
+          \item \textbf{O ``Efeito Messi'' ($0{,}0976 > 1/11$):} Mesmo posicionado na zona mais congestionada do campo, Messi atinge alto PageRank porque \textbf{recebe arestas prioritárias dos dois maiores nós do grafo} ($\text{De Paul} \to \text{Messi}$ e $\text{Enzo} \to \text{Messi}$).
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.41\textwidth}
+      \begin{block}{Perspectivas e Trabalhos Futuros}
+        \begin{enumerate}
+          \footnotesize
+          \setlength{\itemsep}{4pt}
+          \item \textbf{PageRank Personalizado:} Vetor de teletransporte $\mathbf{v}$ ponderado por recuperações de bola (\texttt{Ball Recovery} e \texttt{Interception}).
+          \item \textbf{Tracking Óptico ($25$ Hz):} Ponderação de arestas por defensores ultrapassados (\textit{packing rate}).
+          \item \textbf{Grafos Temporais Multicamada:} Evolução dinâmica pós-substituições.
+        \end{enumerate}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+% SLIDE 8
+\section{Referências}
+\begin{frame}[plain]
+  \begin{fgvfocus}
+    Obrigado! \\
+    Perguntas?
+    \vspace{0.6cm}
+    \begin{minipage}{0.82\textwidth}
+      \centering\scriptsize\color{fgvlav}
+      \textbf{Referências Principais:}\\[0.1cm]
+      [1] BRIN, S.; PAGE, L. \textit{The anatomy of a large-scale hypertextual Web search engine}. Computer Networks, 1998.\\
+      [2] LANGVILLE, A. N.; MEYER, C. D. \textit{Google's PageRank and Beyond}. Princeton University Press, 2006.\\
+      [3] SINGH, K. \textit{Introducing Expected Threat (xT)}. Sports Analytics Blog, 2018.\\
+      [4] STATSBOMB. \textit{StatsBomb Open Data: FIFA World Cup 2022 Dataset} (\texttt{statsbombpy}), 2022.
+    \end{minipage}
+  \end{fgvfocus}
+\end{frame}
+
+\end{document}
